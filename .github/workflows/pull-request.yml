@@ -26,7 +26,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Run linter
         run: nix run ./maintenance#chaotic-nyx.linter
         id: linter
