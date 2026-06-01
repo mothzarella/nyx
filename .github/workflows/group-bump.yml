@@ -140,8 +140,9 @@ jobs:
           fi
 
           # Trigger auto-merge for the PR using a standard merge commit
-          gh pr merge "$BRANCH_NAME" --auto
+          GH_TOKEN="$GH_CI_TOKEN" gh pr merge "$BRANCH_NAME" --auto
         env:
           GH_TOKEN: ${{ secrets.PAT_CHAOTIC }}
+          GH_CI_TOKEN: ${{ github.token }}
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
           TARGETPKG: ${{ inputs.bumpWhat }}
