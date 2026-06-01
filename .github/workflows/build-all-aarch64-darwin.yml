@@ -24,7 +24,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: build-all-aarch64-darwin-${{ github.sha }}
+  group: build-all-aarch64-darwin-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
 
 jobs:
