@@ -114,6 +114,11 @@ jobs:
           FIRST_PKG=$(echo "$TARGETPKG" | jq -r '.[0]')
           BRANCH_NAME="bump/${FIRST_PKG}"
 
+          # Use the PAT for push
+          echo "::add-mask::$GH_TOKEN"
+          B64_TOKEN=$(echo -n "x-access-token:$GH_TOKEN" | base64)
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $B64_TOKEN"
+
           # Force push to the branch
           git push origin "$BRANCH_NAME" --force
 
