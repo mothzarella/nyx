@@ -22,6 +22,7 @@ on:
         type: boolean
   # actually skipping `pull_request_target` below, but needed for PR status
   pull_request_target:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
@@ -34,7 +35,7 @@ concurrency:
 jobs:
   build-all-x86_64-linux:
     name: Build-all x86-64 Linux
-    if: github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'
+    if: github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'
     runs-on: ubuntu-latest
     timeout-minutes: 1440
     outputs:
