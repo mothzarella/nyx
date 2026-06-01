@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.PAT_CHAOTIC }}
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
       # config to commit
       - name: Bat-signal
         run: |
