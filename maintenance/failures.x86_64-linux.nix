@@ -1,10 +1,12 @@
 {
-  "firefox-unwrapped_nightly" = "/nix/store/5baxxgrzwh9cxhx2zqh81n8wznbgym2a-firefox-nightly-unwrapped-153.0a1";
-  "firefox_nightly" = "/nix/store/1lh53mhjzxi94gf2dp3cc6mgyxh57r0m-firefox-nightly-153.0a1";
+  "firefox-unwrapped_nightly" = "/nix/store/ylh5437l4g291rg6bydkmvhhv20gsdcw-firefox-nightly-unwrapped-153.0a1";
+  "firefox_nightly" = "/nix/store/g2yy4dp5jrhcrwx1j14qfkcs89izw9fx-firefox-nightly-153.0a1";
+  "gamescope-wsi32_git" = "/nix/store/0jsbjwz81z7v40rsy9rfqmdp5zn25gmb-gamescope-unstable-20260528201207-17be41f";
+  "gamescope-wsi_git" = "/nix/store/h7lqsrbbj6iay9fzhzv1xm6564y9qbr0-gamescope-unstable-20260528201207-17be41f";
+  "gamescope_git" = "/nix/store/dv1b9dw15liqv0v6rxi08ra5k002zjly-gamescope-unstable-20260528201207-17be41f";
   "linuxPackages_cachyos.facetimehd" = "/nix/store/d62zdrdfgxg7pc7d4ijv58ilx23jmsl0-facetimehd-0.6.13-7.0.10";
   "linuxPackages_cachyos.lttng-modules" = "/nix/store/r36bjsa13f53vnw9ags051s16y5rhpjn-lttng-modules-7.0.10-2.14.3";
   "linuxPackages_cachyos.mbp2018-bridge-drv" = "/nix/store/vvp3hk3ciqm7kvgv2gmvnn8vf5sbwsrx-mbp2018-bridge-drv-2020-01-31";
-  "linuxPackages_cachyos.openrazer" = "/nix/store/3nhagkhp0777nbx3q73mxfyyhb48nngg-openrazer-3.12.2-7.0.10";
   "linuxPackages_cachyos.vhba" = "/nix/store/w5rdy36fh80b4ci0fwz4xc8vvgpvxpqx-vhba-20250329";
   "linuxPackages_cachyos.vmm_clock" = "/nix/store/0af7l1mb76vp38fl0bv4blj2zkfj49cq-vmm_clock-0.2.1";
   "linuxPackages_cachyos.yt6801" = "/nix/store/vfbz6s2bz6lq9agapnkaf5a14bfpby22-yt6801-1.0.30-20250430";
@@ -24,12 +26,12 @@
   "linuxPackages_cachyos-lto.mm-tools" = "/nix/store/l1763kq155dhnhszynw5yyvk6lmh19ym-mm-tools-6.18.33";
   "linuxPackages_cachyos-lto.netatop" = "/nix/store/aq96fxpl6s624gfp2wjx65gccir3q69x-netatop-7.0.10-3.2.2";
   "linuxPackages_cachyos-lto.nvidia_x11_beta_open" = "/nix/store/12zpn0sbbaj7s4i78314c2qy707llwqr-nvidia-open-595.45.04-7.0.10";
-  "linuxPackages_cachyos-lto.nvidia_x11_latest_open" = "/nix/store/hj97jbfa8r5p4jfcyhxfbqa8pm6wk81q-nvidia-open-595.71.05-7.0.10";
+  "linuxPackages_cachyos-lto.nvidia_x11_production_open" = "/nix/store/hj97jbfa8r5p4jfcyhxfbqa8pm6wk81q-nvidia-open-595.71.05-7.0.10";
   "linuxPackages_cachyos-lto.nvidia_x11_vulkan_beta_open" = "/nix/store/k2c8l547q95nhb0v919fb9mvr8lz4max-nvidia-open-595.44.08-7.0.10";
   "linuxPackages_cachyos-lto.oci-seccomp-bpf-hook" = "/nix/store/p2c3ncjqkgqavcikyac2ra44d8iswsn7-oci-seccomp-bpf-hook-x86_64-unknown-linux-gnu-1.3.0";
   "linuxPackages_cachyos-lto.odp-dpdk" = "/nix/store/jkji4hd6ad4df9pjmrgq65fkivxf1sci-odp-dpdk-x86_64-unknown-linux-gnu-1.46.0.0_DPDK_22.11";
   "linuxPackages_cachyos-lto.openafs" = "/nix/store/1jf7bagv4rwwywlj87h1zhmv6xzb6iym-openafs-1.8.15-7.0.10-cachyos";
-  "linuxPackages_cachyos-lto.openrazer" = "/nix/store/hivpgvad7zb8dpvgp5djqcmf64mg267s-openrazer-3.12.2-7.0.10";
+  "linuxPackages_cachyos-lto.openrazer" = "/nix/store/383xrdfdgy161yqpamkr7d6mzgkfyjc9-openrazer-3.12.3-7.0.10";
   "linuxPackages_cachyos-lto.opensnitch-ebpf" = "/nix/store/hg2a7bz7iffhkxjv4b1xql2r5n6hympn-opensnitch_ebpf-1.8.0-7.0.10";
   "linuxPackages_cachyos-lto.pktgen" = "/nix/store/hbbm4z79gr4vd7zspn21wgg74scygk7g-pktgen-x86_64-unknown-linux-gnu-24.10.3";
   "linuxPackages_cachyos-lto.rr-zen_workaround" = "/nix/store/czlil6s77zc13pbn3xg5g4nppx7hn449-rr-zen_workaround-5.9.0";
@@ -51,5 +53,10 @@
   "linuxPackages_cachyos-lto.yt6801" = "/nix/store/8yhfinvxfyn4iyshl4zvcizys654vlii-yt6801-1.0.30-20250430";
   "linuxPackages_cachyos-lto.zenpower" = "/nix/store/zsygaw5vpzdghyjmckzzprsgb0qkc5h0-zenpower-unstable-2025-12-20";
   "linux_cachyos-hardened" = "/nix/store/1l1prxbxjg7ygvqy7p2p9qp3jfay5q1z-linux-7.0.10";
+  "shadps4_git" = "/nix/store/gifi1zhxhv4bmdj6lkbgp76qsrpayxgj-shadps4-unstable-20260602050318-0b9eb3d";
+  "telegram-desktop-unwrapped_git" = "/nix/store/7hqsmc1c71si78v83c8x6sfjiay0v14r-telegram-desktop-unwrapped-unstable-20260601201134-e7f34eb";
+  "telegram-desktop_git" = "/nix/store/2g5x4iabfklhlwy2zda2icqypvg6gsi8-telegram-desktop-unstable-20260601201134-e7f34eb";
   "torzu_git" = "/nix/store/c1i038dn16jzmrq9cl5mh35zmjs4rja5-torzu-unstable-20250422-fd90833";
+  "zed-editor_git" = "/nix/store/q1aa73nilfjv3ygv8wnslr9z20fl7h9l-zed-editor-unstable-20260602053536-c57de85";
+  "zed-editor-fhs_git" = "/nix/store/yqxp1cxqf1lm0aikbwp0wj0nbpb3wpmp-zeditor";
 }
