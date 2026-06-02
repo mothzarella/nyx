@@ -25,6 +25,7 @@ jobs:
   group-bump:
     name: Bump package group
     runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'workflow_dispatch' }}
     timeout-minutes: 1440
     steps:
       # identical to build.yml
