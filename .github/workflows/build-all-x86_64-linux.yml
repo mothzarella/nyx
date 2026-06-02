@@ -128,7 +128,7 @@ jobs:
           fi
         env:
           NYX_WD: ${{ runner.temp }}
-          NYX_PUSH_ALL: ${{ github.event_name == 'pull_request_target' && '1' || '0' }}
+          NYX_PUSH_ALL: ${{ github.event_name == 'pull_request_target' && '0' || '1' }}
           NIKS3_TOKEN: ${{ secrets.NIKS3_TOKEN }}
           SAVE_FAILURES: ${{ (github.event_name == 'pull_request_target' && needs.build-all-check-flake-lock.outputs.flake_changed == 'true') || inputs.commit-failures || false }}
       - name: Comment on commit
