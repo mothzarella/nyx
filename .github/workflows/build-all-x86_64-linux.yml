@@ -62,7 +62,7 @@ jobs:
 
   build-all-x86_64-linux:
     name: Build-all x86-64 Linux
-    needs: [build-all-check-flake-lock, call-build-matrix]
+    needs: [build-all-check-flake-lock, call-build-matrix-x86_64-linux]
     if: |
       !failure() && !cancelled() &&
       (github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call')
