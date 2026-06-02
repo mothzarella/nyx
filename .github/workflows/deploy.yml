@@ -86,7 +86,7 @@ jobs:
   flakehub:
     needs: deploy-docs
     uses: ./.github/workflows/flakehub-publish-rolling.yml
-    if: needs.docs.outputs.built == 'true'
+    if: needs.deploy-docs.outputs.built == 'true'
   deploy-build-aarch64-linux:
     needs: deploy-build
     uses: ./.github/workflows/build-all-aarch64-linux.yml
