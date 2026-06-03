@@ -1,6 +1,10 @@
 name: Deploy Documentation
 on:
   workflow_call:
+    outputs:
+      built:
+        description: "Returns true if the push-pages step succeeded"
+        value: ${{ jobs.push-pages.outputs.built }}
   workflow_dispatch:
 
 permissions:
