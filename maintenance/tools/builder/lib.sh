@@ -165,7 +165,7 @@ function build() {
       echo $_TO_PIN | tee -a to-pin.txt >> full-pin.txt
 
       # If NYX_PUSH_ALL, push & pin it here and now
-      if [ -n "${NYX_PUSH_ALL:-}" ] && [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
+      if [ "${NYX_PUSH_ALL:-}" = "1" ] && [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
         sleep 1
         niks3 push "${_ALL_OUT_PATHS[@]}"
         #echo $_TO_PIN | xargs -n 2 niks3 pin

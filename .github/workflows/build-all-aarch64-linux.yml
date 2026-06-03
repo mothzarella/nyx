@@ -100,7 +100,6 @@ jobs:
         env:
           NYX_WD: ${{ runner.temp }}
           NYX_PUSH_ALL: "1"
-          NIKS3_TOKEN: ${{ secrets.NIKS3_TOKEN }}
           SAVE_FAILURES: ${{ inputs.commit-failures }}
       - name: Comment on commit
         if: (success())
