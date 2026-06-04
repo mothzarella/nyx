@@ -16,12 +16,10 @@ diff --git a/toolkit/content/jar.mn b/toolkit/content/jar.mn
 index 664c315c71..ed514500c1 100644
 --- a/toolkit/content/jar.mn
 +++ b/toolkit/content/jar.mn
-@@ -46,8 +46,6 @@ toolkit.jar:
+@@ -48,6 +48,4 @@ toolkit.jar:
     content/global/aboutUrlClassifier.js
     content/global/aboutUrlClassifier.xhtml
     content/global/aboutUrlClassifier.css
 -*   content/global/buildconfig.html
 -   content/global/buildconfig.css
-    content/global/contentAreaUtils.js
-    content/global/datepicker.xhtml
- #ifndef MOZ_FENNEC
+    content/global/colorpicker.html
