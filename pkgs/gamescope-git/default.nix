@@ -29,8 +29,10 @@ gitOverride (current: {
           builtins.replaceStrings
             [
               ''substituteInPlace src/reshade_effect_manager.cpp --replace-fail "@out@" "$out"''
+              ''substituteInPlace src/Utils/DirHelpers.cpp --replace-fail "@out@" "$out"''
             ]
             [
+              ""
               ""
             ]
             prevAttrs.postPatch;
