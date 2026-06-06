@@ -128,6 +128,7 @@ make ''
     prepare "$@"
     build-jobs "$@"
     finish "$@"
+    no-fail "$@"
     deploy "$@"
   }
   PHASES=''${PHASES:-default-phases};

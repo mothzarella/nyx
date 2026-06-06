@@ -224,7 +224,7 @@ function no-fail() {
 
 # Push logic
 function deploy() {
-    if [ ! -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
+  if [ ! -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
     echo_error "No key for cache push -- failing to deploy."
     exit 23
   elif [ -n "${NYX_PUSH_ANYWAY:-}" ] || [ -s push.txt ]; then
