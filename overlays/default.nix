@@ -319,11 +319,7 @@ in
     repo = "proton-cachyos";
   };
 
-  proton-cachyos_x86_64_v2 = final.proton-cachyos.override {
-    toolTitle = "Proton-CachyOS x86-64-v2";
-    tarballSuffix = "-x86_64_v2.tar.xz";
-    versionFilename = "cachyos-v2-version.json";
-  };
+  proton-cachyos_x86_64_v2 = throw "proton-cachyos_x86_64_v2 was killed in the 20260319 release";
 
   proton-cachyos_x86_64_v3 = final.proton-cachyos.override {
     toolTitle = "Proton-CachyOS x86-64-v3";
@@ -331,11 +327,7 @@ in
     versionFilename = "cachyos-v3-version.json";
   };
 
-  proton-cachyos_x86_64_v4 = final.proton-cachyos.override {
-    toolTitle = "Proton-CachyOS x86-64-v4";
-    tarballSuffix = "-x86_64_v4.tar.xz";
-    versionFilename = "cachyos-v4-version.json";
-  };
+  proton-cachyos_x86_64_v4 = throw "proton-cachyos_x86_64_v4 was killed in the 20260428 release";
 
   proton-ge-custom = final.callPackage ../pkgs/proton-bin {
     toolTitle = "Proton-GE";

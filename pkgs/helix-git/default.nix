@@ -96,7 +96,7 @@ gitOverride (current: {
         ""
     }
     ${final.patch}/bin/patch -p1 -i "$_NYX_DIR/$_PKG_DIR/grammars.patch"
-    NIX_PATH="nixpkgs=${flakes.nixpkgs}:$NIX_PATH" \
+    NIX_PATH="nixpkgs=${flakes.nixpkgs}:''${NIX_PATH:-}" \
       ${final.nix}/bin/nix eval --impure --write-to ./languages.json --expr 'with import <nixpkgs> { }; callPackage ./grammars.nix { }'
     ${final.jq}/bin/jq 'map(
       . + {version: ("0-unstable-" + .lastModifiedDate[0:4] + "-" + .lastModifiedDate[4:6] + "-" + .lastModifiedDate[6:8])}

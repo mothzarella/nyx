@@ -12,6 +12,8 @@ writeShellScript "github-${owner}-${repo}-${ref}-rev-fetcher" ''
   # Use GITHUB_TOKEN if available to avoid rate limiting
   if [ -n "''${GITHUB_TOKEN:-}" ]; then
     AUTH_HEADER=(-H "Authorization: Bearer $GITHUB_TOKEN")
+  elif [ -n "''${GH_TOKEN:-}" ]; then
+    AUTH_HEADER=(-H "Authorization: Bearer $GH_TOKEN")
   else
     AUTH_HEADER=()
   fi
