@@ -205,7 +205,7 @@ in
 
   lan-mouse_git = callOverride ../pkgs/lan-mouse-git { };
 
-  latencyflex-vulkan = final.callPackage ../pkgs/latencyflex-vulkan { };
+  low-latency-layer = final.callPackage ../pkgs/low-latency-layer { };
 
   libbpf_git = callOverride ../pkgs/libbpf-git { };
 
