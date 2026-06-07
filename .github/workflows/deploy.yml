@@ -48,6 +48,7 @@ jobs:
             exit 0
           fi
           UNSTABLE_SHA=$(git ls-remote https://github.com/${{ github.repository }} nyxpkgs-unstable | awk '{print $1}')
+          printf "Current is '%s', deployed is %s\n" '${{ github.sha }}' "$UNSTABLE_SHA"
           if [ "$UNSTABLE_SHA" = "${{ github.sha }}" ]; then
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           else

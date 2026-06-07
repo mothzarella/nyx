@@ -33,40 +33,54 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-all-check-flake-lock:
-    name: Build-all check if flake.lock changed
+  build-all-check-files:
+    name: Build-all check changed files
     if: github.event_name == 'pull_request_target' && github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     outputs:
       flake_changed: ${{ steps.check.outputs.flake_changed }}
+      cachyos_changed: ${{ steps.check.outputs.cachyos_changed }}
+      browser_changed: ${{ steps.check.outputs.browser_changed }}
+      standard_changed: ${{ steps.check.outputs.standard_changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - name: Check flake.lock
+      - name: Check changed files
         id: check
         run: |
-          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -q "^flake\.lock$"; then
-            echo "flake_changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "flake_changed=false" >> "$GITHUB_OUTPUT"
-          fi
+          DIFF=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+
+          if echo "$DIFF" | grep -q "^flake\.lock$"; then echo "flake_changed=true" >> "$GITHUB_OUTPUT"; else echo "flake_changed=false" >> "$GITHUB_OUTPUT"; fi
+          if echo "$DIFF" | grep -Eq "^pkgs/linux-cachyos/"; then echo "cachyos_changed=true" >> "$GITHUB_OUTPUT"; else echo "cachyos_changed=false" >> "$GITHUB_OUTPUT"; fi
+          if echo "$DIFF" | grep -Eq "^pkgs/(nss-git|firefox-nightly)/"; then echo "browser_changed=true" >> "$GITHUB_OUTPUT"; else echo "browser_changed=false" >> "$GITHUB_OUTPUT"; fi
+          if echo "$DIFF" | grep -qEv "^(pkgs/linux-cachyos/|pkgs/nss-git/|pkgs/firefox-nightly/)"; then echo "standard_changed=true" >> "$GITHUB_OUTPUT"; else echo "standard_changed=false" >> "$GITHUB_OUTPUT"; fi
 
   call-build-matrix-x86_64-linux:
     name: Call Build Matrix x86-64 Linux
-    needs: build-all-check-flake-lock
-    if: needs.build-all-check-flake-lock.outputs.flake_changed == 'true'
+    needs: build-all-check-files
+    if: needs.build-all-check-files.outputs.flake_changed == 'true' || needs.build-all-check-files.outputs.cachyos_changed == 'true'
     uses: ./.github/workflows/build-matrix-x86_64-linux.yml
+
+  call-garuda-build-all-x86_64-linux:
+    name: Call Garuda Build-all x86-64 Linux
+    needs: [build-all-check-files, call-build-matrix-x86_64-linux]
+    if: |
+      !failure() && !cancelled() &&
+      github.event_name == 'pull_request_target' &&
+      (needs.build-all-check-files.outputs.cachyos_changed == 'true' || needs.build-all-check-files.outputs.browser_changed == 'true')
+    uses: ./.github/workflows/garuda-build-all-x86_64-linux.yml
+    secrets: inherit
 
   build-all-x86_64-linux:
     name: Build-all x86-64 Linux
-    needs: [build-all-check-flake-lock, call-build-matrix-x86_64-linux]
+    needs: [build-all-check-files, call-build-matrix-x86_64-linux]
     if: |
       !failure() && !cancelled() &&
       github.event.pull_request.draft != true &&
-      (github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call')
+      (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'pull_request_target' && needs.build-all-check-files.outputs.standard_changed == 'true'))
     runs-on: ubuntu-latest
     timeout-minutes: 1440
     outputs:
@@ -130,7 +144,7 @@ jobs:
         env:
           NYX_WD: ${{ runner.temp }}
           NYX_PUSH_ALL: ${{ github.event_name == 'pull_request_target' && '0' || '1' }}
-          SAVE_FAILURES: ${{ (github.event_name == 'pull_request_target' && needs.build-all-check-flake-lock.outputs.flake_changed == 'true') || inputs.commit-failures || false }}
+          SAVE_FAILURES: ${{ (github.event_name == 'pull_request_target' && needs.build-all-check-files.outputs.flake_changed == 'true') || inputs.commit-failures || false }}
           TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - name: Comment on commit
         if: (success())
@@ -166,7 +180,7 @@ jobs:
                 body: `All packages were built and cached successfully! (${process.env.UNBUILDABLE_COUNT} not suitable for building)`
               })
         env:
-          SAVE_FAILURES: ${{ (github.event_name == 'pull_request_target' && needs.build-all-check-flake-lock.outputs.flake_changed == 'true') || inputs.commit-failures || false }}
+          SAVE_FAILURES: ${{ (github.event_name == 'pull_request_target' && needs.build-all-check-files.outputs.flake_changed == 'true') || inputs.commit-failures || false }}
           FAILED_BUILDS_COUNT: ${{ steps.build.outputs.FAILED_BUILDS_COUNT }}
           UNBUILDABLE_COUNT: ${{ steps.build.outputs.UNBUILDABLE_COUNT }}
           FAILED_BUILDS: ${{ steps.build.outputs.FAILED_BUILDS }}

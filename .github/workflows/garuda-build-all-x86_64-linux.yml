@@ -92,16 +92,17 @@ jobs:
           FAILED_BUILDS<<EOF
           $failed_builds
           EOF" >> $GITHUB_OUTPUT
-          if [ "$SAVE_FAILURES" = "true" ]; then
+          if [ "$SAVE_FAILURES" = "true" ] && [ -n "$TARGET_BRANCH" ]; then
             cp ${{ runner.temp }}/new-failures.nix ./maintenance/failures.x86_64-linux.nix
             git add ./maintenance/failures.x86_64-linux.nix
-            git commit -m "failures: update x86_64-linux" && git push || true
+            git commit -m "failures: update x86_64-linux" && git push origin HEAD:"$TARGET_BRANCH" || true
           fi
         env:
           NYX_WD: ${{ runner.temp }}
           NYX_PUSH_ALL: "1"
           NIKS3_TOKEN: ${{ secrets.NIKS3_TOKEN }}
           SAVE_FAILURES: ${{ inputs.commit-failures || false }}
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - name: Comment on commit
         if: (success())
         uses: actions/github-script@v9
