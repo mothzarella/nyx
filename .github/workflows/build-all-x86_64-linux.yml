@@ -22,7 +22,7 @@ on:
         type: boolean
   # actually skipping `pull_request_target` below, but needed for PR status
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: write
@@ -35,7 +35,7 @@ concurrency:
 jobs:
   build-all-check-flake-lock:
     name: Build-all check if flake.lock changed
-    if: github.event_name == 'pull_request_target'
+    if: github.event_name == 'pull_request_target' && github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     outputs:
       flake_changed: ${{ steps.check.outputs.flake_changed }}
@@ -65,6 +65,7 @@ jobs:
     needs: [build-all-check-flake-lock, call-build-matrix-x86_64-linux]
     if: |
       !failure() && !cancelled() &&
+      github.event.pull_request.draft != true &&
       (github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call')
     runs-on: ubuntu-latest
     timeout-minutes: 1440
@@ -121,15 +122,16 @@ jobs:
           FAILED_BUILDS<<EOF
           $failed_builds
           EOF" >> $GITHUB_OUTPUT
-          if [ "$SAVE_FAILURES" = "true" ]; then
+          if [ "$SAVE_FAILURES" = "true" ] && [ -n "$TARGET_BRANCH" ]; then
             cp ${{ runner.temp }}/new-failures.nix ./maintenance/failures.x86_64-linux.nix
             git add ./maintenance/failures.x86_64-linux.nix
-            git commit -m "failures: update x86_64-linux" && git push || true
+            git commit -m "failures: update x86_64-linux" && git push origin HEAD:"$TARGET_BRANCH" || true
           fi
         env:
           NYX_WD: ${{ runner.temp }}
           NYX_PUSH_ALL: ${{ github.event_name == 'pull_request_target' && '0' || '1' }}
           SAVE_FAILURES: ${{ (github.event_name == 'pull_request_target' && needs.build-all-check-flake-lock.outputs.flake_changed == 'true') || inputs.commit-failures || false }}
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - name: Comment on commit
         if: (success())
         uses: actions/github-script@v9
