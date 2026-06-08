@@ -47,6 +47,7 @@
   "linuxPackages_cachyos-lto.yt6801" = "/nix/store/rnhdbsqxdfszw37782p8psxrp7ikm3qx-yt6801-1.0.30-20250430";
   "linuxPackages_cachyos-lto.zenpower" = "/nix/store/4kz2hx1y45jvhhbwsc3r9mlp3bjnilz2-zenpower-unstable-2025-12-20";
   "linux_cachyos-hardened" = "/nix/store/3c5rmykzmfjyhsvfndbf1nl96pyzaqn9-linux-7.0.10";
+  "nyx-generic-git-update" = "/nix/store/y498hzjc1cfknrh8pcz0x1iswlps7pww-nyx-generic-update";
   "shadps4_git" = "/nix/store/qpvz8hy4hf172l75p1lizrmrm6rq8wl6-shadps4-unstable-20260602050318-0b9eb3d";
   "torzu_git" = "/nix/store/007vllh206d9izp1b3n8lywaq9pd7lr7-torzu-unstable-20250422-fd90833";
 }
