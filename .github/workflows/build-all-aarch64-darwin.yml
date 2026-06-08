@@ -65,9 +65,9 @@ jobs:
       - name: Create niks3 auth-token
         run: |
           export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
-          mkdir -p $XDG_CONFIG_HOME/niks3/
-          printf "%s" "$NIKS3_TOKEN" > $XDG_CONFIG_HOME/niks3/auth-token
-          wc $XDG_CONFIG_HOME/niks3/auth-token
+          mkdir -p "$XDG_CONFIG_HOME"/niks3/
+          printf "%s" "$NIKS3_TOKEN" > "$XDG_CONFIG_HOME"/niks3/auth-token
+          wc "$XDG_CONFIG_HOME"/niks3/auth-token
         env:
           NIKS3_TOKEN: ${{ secrets.NIKS3_TOKEN }}
       # the building
@@ -83,7 +83,7 @@ jobs:
           UNBUILDABLE_COUNT=$unbuildable_count
           FAILED_BUILDS<<EOF
           $failed_builds
-          EOF" >> $GITHUB_OUTPUT
+          EOF" >> "$GITHUB_OUTPUT"
           if [ "$SAVE_FAILURES" = "true" ] && [ -n "$TARGET_BRANCH" ]; then
             cp ${{ runner.temp }}/new-failures.nix ./maintenance/failures.aarch64-darwin.nix
             git add ./maintenance/failures.aarch64-darwin.nix

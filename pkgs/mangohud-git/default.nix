@@ -84,9 +84,9 @@ gitOverride {
     ];
 
     patches = builtins.filter (
-      p:
+      patch:
       let
-        name = p.name or (baseNameOf (toString p));
+        name = patch.name or (baseNameOf (toString patch));
       in
       builtins.match ".*preload-nix-workaround.*" name == null
     ) (prevAttrs.patches or [ ]);

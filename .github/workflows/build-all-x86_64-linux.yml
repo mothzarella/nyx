@@ -4,6 +4,10 @@ on:
     branches: [main]
   workflow_call:
     inputs:
+      is_workflow_call:
+        type: boolean
+        required: false
+        default: true
       commit-failures:
         description: Commit failures.nix
         required: false
@@ -80,7 +84,7 @@ jobs:
     if: |
       !failure() && !cancelled() &&
       github.event.pull_request.draft != true &&
-      (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'pull_request_target' && needs.build-all-check-files.outputs.standard_changed == 'true'))
+      (github.event_name == 'workflow_dispatch' || inputs.is_workflow_call == true || (github.event_name == 'pull_request_target' && needs.build-all-check-files.outputs.standard_changed == 'true'))
     runs-on: ubuntu-latest
     timeout-minutes: 1440
     outputs:
@@ -117,9 +121,9 @@ jobs:
       - name: Create niks3 auth-token
         run: |
           export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
-          mkdir -p $XDG_CONFIG_HOME/niks3/
-          printf "%s" "$NIKS3_TOKEN" > $XDG_CONFIG_HOME/niks3/auth-token
-          wc $XDG_CONFIG_HOME/niks3/auth-token
+          mkdir -p "$XDG_CONFIG_HOME"/niks3/
+          printf "%s" "$NIKS3_TOKEN" > "$XDG_CONFIG_HOME"/niks3/auth-token
+          wc "$XDG_CONFIG_HOME"/niks3/auth-token
         env:
           NIKS3_TOKEN: ${{ secrets.NIKS3_TOKEN }}
       # the building
@@ -135,7 +139,7 @@ jobs:
           UNBUILDABLE_COUNT=$unbuildable_count
           FAILED_BUILDS<<EOF
           $failed_builds
-          EOF" >> $GITHUB_OUTPUT
+          EOF" >> "$GITHUB_OUTPUT"
           if [ "$SAVE_FAILURES" = "true" ] && [ -n "$TARGET_BRANCH" ]; then
             cp ${{ runner.temp }}/new-failures.nix ./maintenance/failures.x86_64-linux.nix
             git add ./maintenance/failures.x86_64-linux.nix

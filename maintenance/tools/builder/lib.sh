@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 # Replace temporary paths (when using $NYX_TEMP)
@@ -71,8 +72,8 @@ function prepare() {
   if [ -n "${NYX_CHANGED_ONLY:-}" ]; then
     _DIFF=$(cd "$NYX_SOURCE" \
         && sed -Ei'' "s|compare-to\.url = \"[^\"]*\";|compare-to.url = \"$NYX_CHANGED_ONLY\";|" './maintenance/flake.nix' \
-        && nix build ./maintenance#legacyPackages.${NYX_TARGET}.chaotic-nyx.compared \
-        $NYX_FLAGS --print-out-paths \
+        && nix build ./maintenance#legacyPackages."${NYX_TARGET}".chaotic-nyx.compared \
+        "$NYX_FLAGS" --print-out-paths \
       || exit 13)
 
     ln -s "$_DIFF" filter.txt
@@ -145,7 +146,7 @@ function build() {
     echo "env ${NYX_ENV[*]} nix build --json $NYX_FLAGS ${_FULL_TARGETS[*]}" >> errors.txt
     # Builds all the outputs, redirect the build logs to "error.txt", redirect the built outputs to "push.txt" (to later push)
     if \
-      ( env "${NYX_ENV[@]}" nix build --json $NYX_FLAGS "${_FULL_TARGETS[@]}" |\
+      ( env "${NYX_ENV[@]}" nix build --json "$NYX_FLAGS" "${_FULL_TARGETS[@]}" |\
           jq -r '.[].outputs[]' \
       ) 2>> errors.txt >> push.txt
 
@@ -162,7 +163,7 @@ function build() {
 
       # Add thes "key.$out $outPath" to "to-pin.txt" (to later pin)
       _TO_PIN=$(zip_path)
-      echo $_TO_PIN | tee -a to-pin.txt >> full-pin.txt
+      echo "$_TO_PIN" | tee -a to-pin.txt >> full-pin.txt
 
       # If NYX_PUSH_ALL, push & pin it here and now
       if [ "${NYX_PUSH_ALL:-}" = "1" ] && [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
@@ -215,7 +216,7 @@ function finish() {
 
 # When you need to exit on failures
 function no-fail() {
-  if [ ! $(cat failures.txt | wc -l) -eq 0 ]; then
+  if [ ! "$(cat failures.txt | wc -l)" -eq 0 ]; then
     exit 43
   fi
 
