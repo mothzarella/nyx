@@ -6,6 +6,17 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 charset = utf-8
 
+# the right syntax rule
 [*.nix,*.toml,*.yml,*.sh]
+indent_size = 2
+indent_style = space
+
+# the one shfmt understands
+[*.sh]
+indent_size = 2
+indent_style = space
+
+# the one Zed understands
+[**.nix,**.toml,**.yml,**.sh]
 indent_size = 2
 indent_style = space

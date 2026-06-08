@@ -458,5 +458,5 @@ trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDS
 <h2 id="special-thanks">Special Thanks</h2>
 
 - The [50 contributors](https://github.com/chaotic-cx/nyx/graphs/contributors);
-- Original sponsors:  Silvan, Kai, Elite, and Keenan;
+- Original sponsors: Silvan, Kai, Elite, and Keenan;
 - Everybody that provided feedback through Github, Telegram, and Matrix.

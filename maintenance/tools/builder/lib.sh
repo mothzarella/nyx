@@ -15,6 +15,8 @@ NYX_FLAGS="${NYX_FLAGS:---accept-flake-config --no-link}"
 NYX_WD="${NYX_WD:-$(mktemp -d)}"
 NYX_HOME="${NYX_HOME:-$HOME/.nyx}"
 NYX_CACHE_URL=${NYX_CACHE_URL:-https://nyx-cache.chaotic.cx}
+NYX_PREFIX="${NYX_TARGET}."
+NYX_PHASES="${NYX_PHASES:-default-phases}"
 export NIKS3_SERVER_URL="${NIKS3_SERVER_URL:-https://nyx-niks3.chaotic.cx}"
 export NIKS3_AUTH_TOKEN_FILE=${NIKS3_AUTH_TOKEN_FILE:-$XDG_CONFIG_HOME/niks3/auth-token}
 
@@ -45,7 +47,7 @@ function prepare() {
   [ ! -e "$NYX_WD" ] && mkdir -p "$NYX_WD"
   cd "$NYX_WD"
   touch push.txt errors.txt success.txt failures.txt cached.txt upstream.txt eval-failures.txt
-  echo "{" > new-failures.nix
+  echo "{" >new-failures.nix
 
   # Warn if we don't have cache push
   if [ ! -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
@@ -56,12 +58,12 @@ function prepare() {
   if [ ! -e prev-cache.txt ]; then
     if [ -f prev-cache.json ]; then
       echo "Re-using cached contents"
-      jq -r '.[]' prev-cache.json > prev-cache.txt
+      jq -r '.[]' prev-cache.json >prev-cache.txt
     elif [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
       echo "Downloading current list of cached contents"
-      (awk '{print "header = \"Authorization: Bearer " $0 "\""}' "$NIKS3_AUTH_TOKEN_FILE" |\
-        curl -K - "$NIKS3_SERVER_URL/api/contents" |\
-          jq -r .[] > prev-cache.txt) || true
+      (awk '{print "header = \"Authorization: Bearer " $0 "\""}' "$NIKS3_AUTH_TOKEN_FILE" |
+        curl -K - "$NIKS3_SERVER_URL/api/contents" |
+        jq -r .[] >prev-cache.txt) || true
     else
       echo "Starting without cached contents"
       touch prev-cache.txt
@@ -70,11 +72,11 @@ function prepare() {
 
   # Creates list of what to build when only building what changed
   if [ -n "${NYX_CHANGED_ONLY:-}" ]; then
-    _DIFF=$(cd "$NYX_SOURCE" \
-        && sed -Ei'' "s|compare-to\.url = \"[^\"]*\";|compare-to.url = \"$NYX_CHANGED_ONLY\";|" './maintenance/flake.nix' \
-        && nix build ./maintenance#legacyPackages."${NYX_TARGET}".chaotic-nyx.compared \
-        "$NYX_FLAGS" --print-out-paths \
-      || exit 13)
+    _DIFF=$(cd "$NYX_SOURCE" &&
+      sed -Ei'' "s|compare-to\.url = \"[^\"]*\";|compare-to.url = \"$NYX_CHANGED_ONLY\";|" './maintenance/flake.nix' &&
+      nix build ./maintenance#legacyPackages."${NYX_TARGET}".chaotic-nyx.compared \
+        "$NYX_FLAGS" --print-out-paths ||
+      exit 13)
 
     ln -s "$_DIFF" filter.txt
   fi
@@ -82,17 +84,17 @@ function prepare() {
 
 # Check if $1 is known as cached
 function known-cached() {
-  ( grep "$1" "${NYX_HOME}/cached.txt" || grep "$1" "${NYX_WD}/prev-cache.txt" ) >/dev/null 2>/dev/null
+  (grep "$1" "${NYX_HOME}/cached.txt" || grep "$1" "${NYX_WD}/prev-cache.txt") >/dev/null 2>/dev/null
 }
 
 # Check if $1 is in the cache
 function cached() {
-  ( curl -s -o /dev/null -w "%{http_code}" -I "$1/$2.narinfo" | grep -qv '^404$') 2>/dev/null
+  (curl -s -o /dev/null -w "%{http_code}" -I "$1/$2.narinfo" | grep -qv '^404$') 2>/dev/null
 }
 
 # Helper to zip-merge _ALL_OUT_KEYS and _ALL_OUT_PATHS
 function zip_path() {
-  for (( i=0; i<${#_ALL_OUT_KEYS[*]}; ++i)); do
+  for ((i = 0; i < ${#_ALL_OUT_KEYS[*]}; ++i)); do
     echo "${NYX_PREFIX:-}${_ALL_OUT_KEYS[$i]}" "${_ALL_OUT_PATHS[$i]}"
   done
 }
@@ -111,23 +113,23 @@ function build() {
 
   # If previosuly cached
   if [ -z "${NYX_REBUILD_ALL:-}" ] && known-cached "$_MAIN_OUT_PATH"; then
-    echo "$_WHAT" >> cached.txt
+    echo "$_WHAT" >>cached.txt
     echo -e "${Y} CACHED${W}"
-    zip_path >> full-pin.txt
+    zip_path >>full-pin.txt
     return 0
 
   # If found in our's cache
   elif [ -z "${NYX_REBUILD_ALL:-}" ] && cached "${NYX_CACHE_URL}" "$_MAIN_OUT_HASH"; then
-    echo "$_WHAT" >> cached.txt
-    echo "$_MAIN_OUT_PATH" >> "${NYX_HOME}/cached.txt"
+    echo "$_WHAT" >>cached.txt
+    echo "$_MAIN_OUT_PATH" >>"${NYX_HOME}/cached.txt"
     echo -e "${Y} CACHED${W}"
-    zip_path >> full-pin.txt
+    zip_path >>full-pin.txt
     return 0
 
   # If found in Nixpkgs's cache
   elif cached 'https://cache.nixos.org' "$_MAIN_OUT_HASH"; then
-    echo "$_WHAT" >> upstream.txt
-    echo "$_MAIN_OUT_PATH" >> "${NYX_HOME}/cached.txt"
+    echo "$_WHAT" >>upstream.txt
+    echo "$_MAIN_OUT_PATH" >>"${NYX_HOME}/cached.txt"
     echo -e "${Y} CACHED-UPSTREAM${W}"
     return 0
 
@@ -142,18 +144,19 @@ function build() {
     (while true; do echo -ne "${C} BUILDING${W}\n* $_WHAT..." && sleep 120; done) &
     _KEEPALIVE=$!
 
-    echo '---' >> errors.txt
-    echo "env ${NYX_ENV[*]} nix build --json $NYX_FLAGS ${_FULL_TARGETS[*]}" >> errors.txt
+    echo '---' >>errors.txt
+    echo "env ${NYX_ENV[*]} nix build --json $NYX_FLAGS ${_FULL_TARGETS[*]}" >>errors.txt
     # Builds all the outputs, redirect the build logs to "error.txt", redirect the built outputs to "push.txt" (to later push)
-    if \
-      ( env "${NYX_ENV[@]}" nix build --json "$NYX_FLAGS" "${_FULL_TARGETS[@]}" |\
-          jq -r '.[].outputs[]' \
-      ) 2>> errors.txt >> push.txt
+    if
+      (
+        env "${NYX_ENV[@]}" nix build --json "$NYX_FLAGS" "${_FULL_TARGETS[@]}" |
+          jq -r '.[].outputs[]'
+      ) 2>>errors.txt >>push.txt
 
     # If the build succeeds
     then
       # Adds to success list
-      echo "$_WHAT" >> success.txt
+      echo "$_WHAT" >>success.txt
 
       # Stops the "BUILDING" message
       kill $_KEEPALIVE
@@ -163,14 +166,14 @@ function build() {
 
       # Add thes "key.$out $outPath" to "to-pin.txt" (to later pin)
       _TO_PIN=$(zip_path)
-      echo "$_TO_PIN" | tee -a to-pin.txt >> full-pin.txt
+      echo "$_TO_PIN" | tee -a to-pin.txt >>full-pin.txt
 
       # If NYX_PUSH_ALL, push & pin it here and now
       if [ "${NYX_PUSH_ALL:-}" = "1" ] && [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
         sleep 1
         niks3 push "${_ALL_OUT_PATHS[@]}"
         #echo $_TO_PIN | xargs -n 2 niks3 pin
-        printf '%s\n' "${_ALL_OUT_PATHS[@]}" >> "${NYX_HOME}/cached.txt"
+        printf '%s\n' "${_ALL_OUT_PATHS[@]}" >>"${NYX_HOME}/cached.txt"
       fi
 
       # Ends it, successfully, here
@@ -198,20 +201,20 @@ function failure() {
   fi
 
   # Add it to failures list
-  echo "$_WHAT" >> failures.txt
+  echo "$_WHAT" >>failures.txt
 
   # Add it to the know-failures list (to skip it in later builds)
   if [ -z "$_KNOWN_ISSUE" ]; then
-    echo "  \"$_WHAT\" = \"$_MAIN_OUT_PATH\";" >> new-failures.nix
+    echo "  \"$_WHAT\" = \"$_MAIN_OUT_PATH\";" >>new-failures.nix
   else
-    echo "  \"$_WHAT\" = \"$_KNOWN_ISSUE\";" >> new-failures.nix
+    echo "  \"$_WHAT\" = \"$_KNOWN_ISSUE\";" >>new-failures.nix
   fi
 }
 
 # Run when building finishes, before deploying
 function finish() {
   # Write EOF of the artifacts
-  echo "}" >> new-failures.nix
+  echo "}" >>new-failures.nix
 }
 
 # When you need to exit on failures
@@ -241,9 +244,29 @@ function deploy() {
     #fi
 
     # Locally tag everything as cached
-    cat push.txt >> "${NYX_HOME}/cached.txt"
+    cat push.txt >>"${NYX_HOME}/cached.txt"
   else
     echo_error "Nothing to push."
     exit 42
   fi
+}
+
+function build-jobs() {
+  # PLACEHOLDER
+  return 0
+}
+
+# Phases system
+function default-phases() {
+  prepare "$@"
+  build-jobs "$@"
+  finish "$@"
+  no-fail "$@"
+  deploy "$@"
+}
+
+function run-phases() {
+  for phase in $NYX_PHASES; do
+    $phase "$@"
+  done
 }

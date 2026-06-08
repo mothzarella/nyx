@@ -109,7 +109,6 @@ make ''
   # Options (1)
   NYX_SOURCE="''${NYX_SOURCE:-${flakeSelf}}"
   NYX_TARGET="''${NYX_TARGET:-${system}}"
-  NYX_PREFIX="''${NYX_TARGET}."
 
   # All the required functions
   source ${./lib.sh}
@@ -123,16 +122,7 @@ make ''
     return 0
   }
 
-  # Phases system
-  function default-phases () {
-    prepare "$@"
-    build-jobs "$@"
-    finish "$@"
-    no-fail "$@"
-    deploy "$@"
-  }
-  PHASES=''${PHASES:-default-phases};
-  for phase in $PHASES; do $phase "$@"; done
+  run-phases "$@"
 
   # Useless exit but informative when running with "bash -x"
   exit 0
