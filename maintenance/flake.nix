@@ -9,7 +9,7 @@
       inputs.flake-schemas.follows = "chaotic/flake-schemas";
     };
     niks3 = {
-      url = "github:Mic92/niks3/main";
+      url = "github:Mic92/niks3/c74d275536d9a38ff279b498612fae0fd68cfe85";
       inputs.nixpkgs.follows = "chaotic/nixpkgs";
     };
   };
