@@ -11,7 +11,7 @@ XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 # Options
 NYX_ENV=('NIXPKGS_ALLOW_BROKEN=1')
-NYX_FLAGS="${NYX_FLAGS:---accept-flake-config --no-link}"
+NYX_FLAGS=('--accept-flake-config' '--no-link')
 NYX_WD="${NYX_WD:-$(mktemp -d)}"
 NYX_HOME="${NYX_HOME:-$HOME/.nyx}"
 NYX_CACHE_URL=${NYX_CACHE_URL:-https://nyx-cache.chaotic.cx}
@@ -75,7 +75,7 @@ function prepare() {
     _DIFF=$(cd "$NYX_SOURCE" &&
       sed -Ei'' "s|compare-to\.url = \"[^\"]*\";|compare-to.url = \"$NYX_CHANGED_ONLY\";|" './maintenance/flake.nix' &&
       nix build ./maintenance#legacyPackages."${NYX_TARGET}".chaotic-nyx.compared \
-        "$NYX_FLAGS" --print-out-paths ||
+        "${NYX_FLAGS[@]}" --print-out-paths ||
       exit 13)
 
     ln -s "$_DIFF" filter.txt
@@ -145,11 +145,11 @@ function build() {
     _KEEPALIVE=$!
 
     echo '---' >>errors.txt
-    echo "env ${NYX_ENV[*]} nix build --json $NYX_FLAGS ${_FULL_TARGETS[*]}" >>errors.txt
+    echo "env ${NYX_ENV[*]} nix build --json ${NYX_FLAGS[*]} ${_FULL_TARGETS[*]}" >>errors.txt
     # Builds all the outputs, redirect the build logs to "error.txt", redirect the built outputs to "push.txt" (to later push)
     if
       (
-        env "${NYX_ENV[@]}" nix build --json "$NYX_FLAGS" "${_FULL_TARGETS[@]}" |
+        env "${NYX_ENV[@]}" nix build --json "${NYX_FLAGS[@]}" "${_FULL_TARGETS[@]}" |
           jq -r '.[].outputs[]'
       ) 2>>errors.txt >>push.txt
 
