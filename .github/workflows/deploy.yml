@@ -62,6 +62,7 @@ jobs:
     secrets: inherit
     with:
       commit-failures: ${{ inputs.commit-x86_64-linux-failures || false }}
+      pin: "missing"
   deploy-push:
     name: Push to nyxpkgs-unstable
     needs: deploy-build
@@ -95,6 +96,7 @@ jobs:
     secrets: inherit
     with:
       commit-failures: ${{ inputs.commit-aarch64-linux-failures || false }}
+      pin: "missing"
   deploy-build-aarch64-darwin:
     needs: deploy-build
     uses: ./.github/workflows/build-all-aarch64-darwin.yml
@@ -102,3 +104,4 @@ jobs:
     secrets: inherit
     with:
       commit-failures: ${{ inputs.commit-aarch64-darwin-failures || false }}
+      pin: "missing"

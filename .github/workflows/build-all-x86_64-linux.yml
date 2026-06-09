@@ -13,6 +13,11 @@ on:
         required: false
         default: true
         type: boolean
+      pin:
+        description: Pin strategy
+        required: false
+        default: "none"
+        type: string
     outputs:
       built:
         description: "Returns true if the build step succeeded"
@@ -24,6 +29,16 @@ on:
         required: false
         default: true
         type: boolean
+      pin:
+        description: Pin strategy
+        required: false
+        default: "none"
+        type: choice
+        options:
+          - new
+          - full
+          - missing
+          - none
   # actually skipping `pull_request_target` below, but needed for PR status
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
@@ -113,11 +128,6 @@ jobs:
           git config --global user.name 'Chaotic Github Actions'
           git config --global user.email 'actions@chaotic.cx'
       # similar to build.yml
-      - name: Download cache list
-        continue-on-error: true
-        run: |
-          curl -vfo "${{ runner.temp }}/prev-cache.json" -H "Authorization: Bearer ${{ secrets.NIKS3_TOKEN }}" \
-            'https://nyx-niks3.chaotic.cx/api/contents'
       - name: Create niks3 auth-token
         run: |
           export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
@@ -148,6 +158,7 @@ jobs:
         env:
           NYX_WD: ${{ runner.temp }}
           NYX_PUSH_ALL: ${{ github.event_name == 'pull_request_target' && '0' || '1' }}
+          NYX_PIN: ${{ inputs.pin || 'none' }}
           SAVE_FAILURES: ${{ (github.event_name == 'pull_request_target' && needs.build-all-check-files.outputs.flake_changed == 'true') || inputs.commit-failures || false }}
           TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - name: Comment on commit

@@ -61,9 +61,7 @@ function prepare() {
       jq -r '.[]' prev-cache.json >prev-cache.txt
     elif [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
       echo "Downloading current list of cached contents"
-      (awk '{print "header = \"Authorization: Bearer " $0 "\""}' "$NIKS3_AUTH_TOKEN_FILE" |
-        curl -K - "$NIKS3_SERVER_URL/api/contents" |
-        jq -r .[] >prev-cache.txt) || true
+      niks3 pins list | awk 'NR > 1 {print $1" "$2}' | sort -u >prev-cache.txt
     else
       echo "Starting without cached contents"
       touch prev-cache.txt
@@ -168,11 +166,10 @@ function build() {
       _TO_PIN=$(zip_path)
       echo "$_TO_PIN" | tee -a to-pin.txt >>full-pin.txt
 
-      # If NYX_PUSH_ALL, push & pin it here and now
+      # If NYX_PUSH_ALL, push it here and now
       if [ "${NYX_PUSH_ALL:-}" = "1" ] && [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
         sleep 1
         niks3 push "${_ALL_OUT_PATHS[@]}"
-        #echo $_TO_PIN | xargs -n 2 niks3 pin
         printf '%s\n' "${_ALL_OUT_PATHS[@]}" >>"${NYX_HOME}/cached.txt"
       fi
 
@@ -220,7 +217,7 @@ function finish() {
 # When you need to exit on failures
 function no-fail() {
   if [ ! "$(cat failures.txt | wc -l)" -eq 0 ]; then
-    exit 43
+    exit 13
   fi
 
   return 0
@@ -231,20 +228,27 @@ function deploy() {
   if [ ! -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
     echo_error "No key for cache push -- failing to deploy."
     exit 23
-  elif [ -n "${NYX_PUSH_ANYWAY:-}" ] || [ -s push.txt ]; then
+  elif [ -s push.txt ]; then
     # Let nix digest store paths first
     sleep 10
 
     # Push all new deriations with compression
     cat push.txt | xargs niks3 push
 
-    # Pin packages
-    #if [ -e to-pin.txt ]; then
-    #  cat to-pin.txt | xargs -n 2 niks3 pin
-    #fi
-
     # Locally tag everything as cached
     cat push.txt >>"${NYX_HOME}/cached.txt"
+
+    # Pin packages
+    if [ "${NYX_PIN:-}" = 'new' ] && [ -s to-pin.txt ]; then
+      cat to-pin.txt | xargs -n 2 niks3 pins create
+    elif [ "${NYX_PIN:-}" = 'full' ] && [ -s full-pin.txt ]; then
+      cat full-pin.txt | xargs -n 2 niks3 pins create
+    elif [ "${NYX_PIN:-}" = 'missing' ] && [ -s full-pin.txt ] && [ -s prev-cache.txt ]; then
+      comm -23 prev-cache.txt <(sort -u full-pin.txt) | xargs -rn 2 niks3 pins create
+    elif [ -n "${NYX_PIN:-}" ] && [ "$NYX_PIN" != 'none' ]; then
+      echo_error "Expected to pin, but some necessary file was missing or empty"
+      exit 69
+    fi
   else
     echo_error "Nothing to push."
     exit 42

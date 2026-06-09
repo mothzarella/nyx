@@ -77,11 +77,6 @@ jobs:
         with:
           fetch-depth: 0
       # similar to build.yml
-      - name: Download cache list
-        continue-on-error: true
-        run: |
-          curl -vfo "${{ runner.temp }}/prev-cache.json" -H "Authorization: Bearer ${{ secrets.NIKS3_TOKEN }}" \
-            'https://nyx-niks3.chaotic.cx/api/contents'
       - name: Create niks3 auth-token
         run: |
           export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
