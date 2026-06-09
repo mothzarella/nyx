@@ -31,11 +31,16 @@ let
       # Matches build.yml and full-bump.yml
       pinnedNix = pkgs.nixVersions.latest;
 
+      # We need our pinned niks3 cached
+      allPackages = nyxPkgs // {
+        chaotic-nyx-niks3 = niks3.packages.${nixPkgs.stdenv.hostPlatform.system}.niks3;
+      };
     in
     rec {
       builder = callPackage ../tools/builder {
         nix = pinnedNix;
         inherit dry-build;
+        niks3 = allPackages.chaotic-nyx-niks3;
       };
       builder-arg1 = callPackage ../tools/builder {
         nix = pinnedNix;
@@ -43,29 +48,27 @@ let
         outsourceBuildJobs = "\"$1\"";
       };
       dry-build = callPackage ../tools/dry-build {
-        allPackages = nyxPkgs;
         flakeSelf = self;
-        inherit nyxRecursionHelper;
+        inherit nyxRecursionHelper allPackages;
         inherit (pkgs) nyxUtils;
       };
       build-matrix = callPackage ../tools/build-matrix {
         inherit builder;
       };
       documentation = callPackage ../tools/document {
-        allPackages = nyxPkgs;
         homeManagerModule = homeManagerModules.default;
         inherit
           nixpkgs
           nyxRecursionHelper
           self
           nyxosConfiguration
+          allPackages
           ;
         inherit (home-manager.lib) homeManagerConfiguration;
       };
       compared = callPackage ../tools/comparer {
-        allPackages = nyxPkgs;
         compareToFlake = flakes.compare-to;
-        inherit nyxRecursionHelper;
+        inherit nyxRecursionHelper allPackages;
       };
       bump-matrix = callPackage ../tools/bump-matrix {
         inherit dry-build;
@@ -77,7 +80,6 @@ let
 
   mkDevPackagesSet = nyxPkgs: nixPkgs: {
     chaotic-nyx = mkDevPackages nyxPkgs nixPkgs;
-    inherit (niks3.packages.${nixPkgs.stdenv.hostPlatform.system}) niks3;
   };
 in
 base
