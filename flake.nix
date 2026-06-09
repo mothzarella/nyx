@@ -21,6 +21,11 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Pinned to the version we're using (sorry to forward this to your locks, we need it cached)
+    niks3 = {
+      url = "github:Mic92/niks3/c74d275536d9a38ff279b498612fae0fd68cfe85";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

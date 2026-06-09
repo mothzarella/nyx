@@ -12,11 +12,14 @@
   selfOverlay ? self.overlays.default,
   jovian ? flakes.jovian,
   rust-overlay ? flakes.rust-overlay,
+  niks3 ? flakes.niks3,
   nixpkgsExtraConfig ? { },
 }:
 final: prev:
 
 let
+  inherit (final.stdenv.hostPlatform) system;
+
   # Required to load version files.
   inherit (final.lib.trivial) importJSON;
 
@@ -73,7 +76,7 @@ let
     fetchRevFromGitea = final.callPackage ../shared/gitea-rev-fetcher.nix { };
   };
 
-  rustc_latest = rust-overlay.packages.${final.stdenv.hostPlatform.system}.rust;
+  rustc_latest = rust-overlay.packages.${system}.rust;
 
   # Latest rust toolchain from Fenix
   rustPlatform_latest = final.makeRustPlatform {
@@ -246,6 +249,9 @@ in
   mesa32_git =
     if has32 then callOverride32 ../pkgs/mesa-git { } else throw "No mesa32_git for non-x86";
 
+  # Pinned to the version on our server
+  niks3_nyx = niks3.packages.${system}.niks3;
+
   nvidia_cachyos = callOverride ../pkgs/nvidia-cachyos { };
   nvidia_cachyos-gcc = final.nvidia_cachyos;
   nvidia_cachyos-lto = final.nvidia_cachyos;
@@ -348,7 +354,7 @@ in
 
   river_git = callOverride ../pkgs/river-git { };
 
-  rustc_nightly = rust-overlay.packages.${final.stdenv.hostPlatform.system}.rust-nightly;
+  rustc_nightly = rust-overlay.packages.${system}.rust-nightly;
 
   sdl_git = callOverride ../pkgs/sdl-git { };
 
