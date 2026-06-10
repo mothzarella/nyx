@@ -82,6 +82,7 @@ jobs:
     needs: build-all-check-files
     if: needs.build-all-check-files.outputs.flake_changed == 'true' || needs.build-all-check-files.outputs.cachyos_changed == 'true'
     uses: ./.github/workflows/build-matrix-x86_64-linux.yml
+    secrets: inherit
 
   call-garuda-build-all-x86_64-linux:
     name: Call Garuda Build-all x86-64 Linux
