@@ -34,7 +34,6 @@ let
       builder = callPackage ../tools/builder {
         nix = pinnedNix;
         inherit dry-build;
-        niks3 = nyxPkgs.niks3_nyx;
       };
       builder-arg1 = callPackage ../tools/builder {
         nix = pinnedNix;
