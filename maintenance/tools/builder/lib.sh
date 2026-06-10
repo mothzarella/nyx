@@ -50,7 +50,7 @@ function prepare() {
   echo "{" >new-failures.nix
 
   # Warn if we don't have cache push
-  if [ ! -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
+  if [ ! -s "$NIKS3_AUTH_TOKEN_FILE" ]; then
     echo_warning "No key for cache push in \"$NIKS3_AUTH_TOKEN_FILE\" -- building anyway."
   fi
 
@@ -59,7 +59,7 @@ function prepare() {
     if [ -f prev-cache.json ]; then
       echo "Re-using cached contents"
       jq -r '.[]' prev-cache.json >prev-cache.txt
-    elif [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
+    elif [ -s "$NIKS3_AUTH_TOKEN_FILE" ]; then
       echo "Downloading current list of cached contents"
       niks3 pins list | awk 'NR > 1 {print $1" "$2}' | sort -u >prev-cache.txt
     else
@@ -167,7 +167,7 @@ function build() {
       echo "$_TO_PIN" | tee -a to-pin.txt >>full-pin.txt
 
       # If NYX_PUSH_ALL, push it here and now
-      if [ "${NYX_PUSH_ALL:-}" = "1" ] && [ -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
+      if [ "${NYX_PUSH_ALL:-}" = "1" ] && [ -s "$NIKS3_AUTH_TOKEN_FILE" ]; then
         sleep 1
         niks3 push "${_ALL_OUT_PATHS[@]}"
         printf '%s\n' "${_ALL_OUT_PATHS[@]}" >>"${NYX_HOME}/cached.txt"
@@ -217,6 +217,7 @@ function finish() {
 # When you need to exit on failures
 function no-fail() {
   if [ ! "$(cat failures.txt | wc -l)" -eq 0 ]; then
+    echo_error "Errors found -- exiting early."
     exit 13
   fi
 
@@ -225,7 +226,7 @@ function no-fail() {
 
 # Push logic
 function deploy() {
-  if [ ! -f "$NIKS3_AUTH_TOKEN_FILE" ]; then
+  if [ ! -s "$NIKS3_AUTH_TOKEN_FILE" ]; then
     echo_error "No key for cache push -- failing to deploy."
     exit 23
   elif [ -s push.txt ]; then
