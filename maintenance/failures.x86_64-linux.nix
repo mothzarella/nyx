@@ -1,6 +1,4 @@
 {
-  "firefox-unwrapped_nightly" = "/nix/store/rqrzxav78qi1yqp6ahhpvnbghj0lbc5s-firefox-nightly-unwrapped-153.0a1";
-  "firefox_nightly" = "/nix/store/di01cnhh1rbw2x3x5lw5vzvzz2bxwnbx-firefox-nightly-153.0a1";
   "linuxPackages_cachyos.facetimehd" = "/nix/store/dr62lmfa789bd0zv904hz8wx3rfrbjna-facetimehd-0.6.13-7.0.12";
   "linuxPackages_cachyos.lttng-modules" = "/nix/store/0mbdzd39ydn8gw7b29yi1m8jyqz0myr4-lttng-modules-7.0.12-2.14.3";
   "linuxPackages_cachyos.mbp2018-bridge-drv" = "/nix/store/bf67cdp0yrwl2c9026k4hzjhksb8q7aj-mbp2018-bridge-drv-2020-01-31";
