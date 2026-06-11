@@ -217,8 +217,12 @@ function finish() {
 # When you need to exit on failures
 function no-fail() {
   if [ ! "$(cat failures.txt | wc -l)" -eq 0 ]; then
-    echo_error "Errors found -- exiting early."
-    exit 13
+    if [ "${NYX_PUSH_ALL:-}" = "1" ]; then
+      echo_warning "Errors found -- ignoring (push-all)."
+    else
+      echo_error "Errors found -- exiting early."
+      exit 13
+    fi
   fi
 
   return 0
