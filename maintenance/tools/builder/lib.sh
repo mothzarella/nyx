@@ -228,6 +228,11 @@ function no-fail() {
   return 0
 }
 
+function pin_stdin() {
+  # shellcheck disable=SC2016
+  xargs -rn 2 bash -c 'niks3 pins create "$1" "$2" || echo "Failed to pin $1"' _
+}
+
 # Push logic
 function deploy() {
   if [ ! -s "$NIKS3_AUTH_TOKEN_FILE" ]; then
@@ -248,11 +253,11 @@ function deploy() {
 
   # Pin packages
   if [ "${NYX_PIN:-}" = 'new' ] && [ -s to-pin.txt ]; then
-    cat to-pin.txt | xargs -n 2 niks3 pins create
+    cat to-pin.txt | pin_stdin
   elif [ "${NYX_PIN:-}" = 'full' ] && [ -s full-pin.txt ]; then
-    cat full-pin.txt | xargs -n 2 niks3 pins create
+    cat full-pin.txt | pin_stdin
   elif [ "${NYX_PIN:-}" = 'missing' ] && [ -s full-pin.txt ] && [ -s prev-cache.txt ]; then
-    comm -13 prev-cache.txt <(sort -u full-pin.txt) | xargs -rn 2 niks3 pins create
+    comm -13 prev-cache.txt <(sort -u full-pin.txt) | pin_stdin
   elif [ -n "${NYX_PIN:-}" ] && [ "$NYX_PIN" != 'none' ]; then
     echo_warning "Expected to pin, but some necessary file was missing or empty"
   fi

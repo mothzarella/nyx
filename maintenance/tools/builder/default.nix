@@ -6,30 +6,30 @@
 
   lib,
 
+  bash,
   coreutils-full,
-  niks3_nyx,
   curl,
   findutils,
-  git,
   gawk,
   gnugrep,
   gnused,
   jq,
+  niks3_nyx,
   nix,
 
   writeShellScriptBin,
 }:
 let
   path = lib.makeBinPath [
+    bash
     coreutils-full
-    niks3_nyx
     curl
     findutils
-    git # cachix requires "git" in PATH
     gawk
     gnugrep
     gnused
     jq
+    niks3_nyx
     nix
   ];
 
