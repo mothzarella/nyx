@@ -252,7 +252,7 @@ function deploy() {
   elif [ "${NYX_PIN:-}" = 'full' ] && [ -s full-pin.txt ]; then
     cat full-pin.txt | xargs -n 2 niks3 pins create
   elif [ "${NYX_PIN:-}" = 'missing' ] && [ -s full-pin.txt ] && [ -s prev-cache.txt ]; then
-    comm -23 prev-cache.txt <(sort -u full-pin.txt) | xargs -rn 2 niks3 pins create
+    comm -13 prev-cache.txt <(sort -u full-pin.txt) | xargs -rn 2 niks3 pins create
   elif [ -n "${NYX_PIN:-}" ] && [ "$NYX_PIN" != 'none' ]; then
     echo_warning "Expected to pin, but some necessary file was missing or empty"
   fi

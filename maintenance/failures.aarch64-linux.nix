@@ -1,30 +1,15 @@
 {
-  "ananicy-rules-cachyos_git" = "/nix/store/ap3dpxrkj0lvz2k2hhk5d3qhm4gpc5lx-ananicy-rules-cachyos-unstable-20260608023356-c1311b7";
   "bees_git" = "/nix/store/30sgamxhprrlpl0y65yzx4lhxpca6qcx-bees-unstable-20260503221818-2d53565";
   "bpftools_full" = "/nix/store/h34r1pvdvhpj11m8iaa3k8m47133fyzx-bpftools-7.0.11";
   "firefox-unwrapped_nightly" = "skip";
   "firefox_nightly" = "skip";
-  "gamescope-wsi_git" = "/nix/store/fkrlqlg511h92ngcgvxb0aagd4jmxyrn-gamescope-unstable-20260528201207-17be41f";
-  "gamescope_git" = "/nix/store/wz8yv6mz0xppdhbbs1mdavfb7k7d5clx-gamescope-unstable-20260528201207-17be41f";
-  "ghostty_git" = "/nix/store/7rms440abpgmhv43wnpxwwhjxr3g2f0x-ghostty-unstable-20260608025109-2ba5e6b";
-  "helix_git" = "/nix/store/rnl6s9n9cdhl35hy2am18fl56bhs5ppw-helix-unwrapped-unstable-20260607182213-4c1f3ac";
-  "jujutsu_git" = "/nix/store/sdpqx6n9rapa3y0fxzp6ifar53wmrj7s-jujutsu-unstable-20260608031522-990efb5";
-  "mangohud_git" = "/nix/store/yfvggmwsampqwsdnx5ss4j4bni67z55g-mangohud-unstable-20260607214243-7d56089";
-  "niri_git" = "/nix/store/x9wjhkkj0zn0n875pg2nbl9rlcc4iwva-niri-unstable-20260605052852-f717ae0";
-  "nix_git" = "/nix/store/mrv2z4pgnq16sn5qpffiw8b5djcx8npy-nix-2.99pre20260607_bdef58e9";
   "nyx-generic-git-update" = "/nix/store/5cp8n5q514m24pp2miq54kfrb9mqrw6l-nyx-generic-update";
-  "openrgb_git" = "/nix/store/nphh24s1zm5a3rlxzyi81pj5jpfwvk0d-openrgb-unstable-20260607190834-f15c3c1";
-  "qtile-module_git" = "/nix/store/cngcj22i9m8wm5wsml70yj2l43frhwc1-python3.13-qtile-0.36.0.99.99";
   "qtile-extras_git" = "/nix/store/d4l3azd20dnv4gvmnczrrqkagn0d79rv-python3.13-qtile-extras-0.36.99.99";
+  "qtile-module_git" = "/nix/store/cngcj22i9m8wm5wsml70yj2l43frhwc1-python3.13-qtile-0.36.0.99.99";
   "river_git" = "/nix/store/ahhvbnbxrx14zwk5zrjhwm4i150d3bp1-river-classic-unstable-20260521070523-b1af960";
-  "rustc_nightly" = "/nix/store/akfgavr2h3js64mp14j70k8j263c6x13-rust-default-1.98.0-nightly-2026-06-08";
-  "wlroots_git" = "/nix/store/zrsmi3j9pnfmqyz3qk2l8gh1l178nyhy-wlroots-unstable-20260602091546-a94cd29";
-  "sway-unwrapped_git" = "/nix/store/xrbkcswdk3v21xlmj7jx2xv83kmcyc4v-sway-unwrapped-unstable-20260602224140-97c342f";
-  "sway_git" = "/nix/store/rbsfp3rg5kj2m3zzj5rjacr8a3xlxxwm-sway-unstable-20260602224140-97c342f";
-  "tg-owt_git" = "/nix/store/9jhzvj3gq8nkilv95dmyxcfn9kkyhhk3-tg_owt-unstable-20260409072434-89df288";
   "telegram-desktop-unwrapped_git" = "skip";
   "telegram-desktop_git" = "/nix/store/sp9nq8pxvfhrmpf9vpbfgvp7cfdh5854-telegram-desktop-unstable-20260601201134-e7f34eb";
-  "yt-dlp_git" = "/nix/store/smzpgqvdym8qvyzlk80pz5ndgg6qfj6w-yt-dlp-unstable-20260606212453-5faffa9";
-  "zed-editor_git" = "/nix/store/1zg19bvyrpqxf4yk8wanbhpyr5nz2g5p-zed-editor-unstable-20260602053536-c57de85";
+  "tg-owt_git" = "/nix/store/9jhzvj3gq8nkilv95dmyxcfn9kkyhhk3-tg_owt-unstable-20260409072434-89df288";
   "zed-editor-fhs_git" = "/nix/store/d9wcf68sd2cl0gnamq9vx9c8kadnpvvs-zeditor";
+  "zed-editor_git" = "/nix/store/1zg19bvyrpqxf4yk8wanbhpyr5nz2g5p-zed-editor-unstable-20260602053536-c57de85";
 }
