@@ -44,7 +44,7 @@ gitOverride (current: {
     cargoArgs
     // {
       postBuild = ''
-        rm -r $out/git/*/candle-book/
+        rm -rf $out/git/*/candle-book/
       '';
     };
 })
