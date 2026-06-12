@@ -40,6 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.check.outputs.should_run }}
+      old_sha: ${{ steps.check.outputs.old_sha }}
     steps:
       - id: check
         run: |
@@ -49,6 +50,7 @@ jobs:
           fi
           UNSTABLE_SHA=$(git ls-remote https://github.com/${{ github.repository }} nyxpkgs-unstable | awk '{print $1}')
           printf "Current is '%s', deployed is %s\n" '${{ github.sha }}' "$UNSTABLE_SHA"
+          echo "old_sha=$UNSTABLE_SHA" >> "$GITHUB_OUTPUT"
           if [ "$UNSTABLE_SHA" = "${{ github.sha }}" ]; then
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           else
@@ -81,6 +83,35 @@ jobs:
         id: push
         run: |
           git push origin HEAD:nyxpkgs-unstable --force
+  notify-telegram-deployment:
+    name: Notify Telegram Deployment
+    needs: [check-sync, deploy-push]
+    if: needs.deploy-push.outputs.pushed == 'true'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Collect newly deployed commits
+        id: collect_new_commits
+        run: |
+          COMMITS=$(git log --pretty=format:"- %s" ${{ needs.check-sync.outputs.old_sha }}..HEAD || echo "- Multiple updates")
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "commits<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$COMMITS" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+      - name: Send Telegram Message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            New update deployed!
+
+            New commits:
+            ${{ steps.collect_new_commits.outputs.commits }}
   deploy-docs:
     needs: deploy-push
     uses: ./.github/workflows/document.yml
