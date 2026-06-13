@@ -97,7 +97,7 @@ jobs:
       - name: Collect newly deployed commits
         id: collect_new_commits
         run: |
-          COMMITS=$(git log --pretty=format:"- `%s`" ${{ needs.check-sync.outputs.old_sha }}..HEAD || echo "- Multiple updates")
+          COMMITS=$(git log --pretty=format:"- %s" ${{ needs.check-sync.outputs.old_sha }}..HEAD || echo "- Multiple updates")
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "commits<<$EOF" >> "$GITHUB_OUTPUT"
           echo "$COMMITS" >> "$GITHUB_OUTPUT"
