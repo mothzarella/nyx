@@ -83,8 +83,8 @@ jobs:
         id: push
         run: |
           git push origin HEAD:nyxpkgs-unstable --force
-  notify-telegram-deployment:
-    name: Notify Telegram Deployment
+  notify-socials-deployment:
+    name: Notify Socials Deployment
     needs: [check-sync, deploy-push]
     if: needs.deploy-push.outputs.pushed == 'true'
     continue-on-error: true
@@ -112,30 +112,11 @@ jobs:
 
             New commits:
             ${{ steps.collect_new_commits.outputs.commits }}
-  notify-matrix-deployment:
-    name: Notify Matrix Deployment
-    needs: [check-sync, deploy-push]
-    if: needs.deploy-push.outputs.pushed == 'true'
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Collect newly deployed commits
-        id: collect_new_commits
-        run: |
-          COMMITS=$(git log --pretty=format:"- %s" ${{ needs.check-sync.outputs.old_sha }}..HEAD || echo "- Multiple updates")
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "commits<<$EOF" >> "$GITHUB_OUTPUT"
-          echo "$COMMITS" >> "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
       - name: Send Matrix Notification
         run: |
           curl -XPUT -H "Content-Type: application/json" \
             "https://${{ secrets.MATRIX_SERVER }}/_matrix/client/v3/rooms/${{ secrets.MATRIX_TO }}/send/m.room.message/${TXN_ID}?access_token=${{ secrets.MATRIX_TOKEN }}" \
-            -d '{"msgtype": "m.text", "body": "New update deployed!\n\nNew commits:\n${{ needs.notify-telegram-deployment.outputs.commits }}"}'
+            -d '{"msgtype": "m.text", "body": "New update deployed!\n\nNew commits:\n${{ steps.collect_new_commits.outputs.commits }}"}'
         env:
           TXN_ID: ${{ github.run_id }}-${{ github.job }}
   deploy-docs:
