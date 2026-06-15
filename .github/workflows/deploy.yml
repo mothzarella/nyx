@@ -134,7 +134,7 @@ jobs:
       - name: Send Matrix Notification
         run: |
           curl -XPUT -H "Content-Type: application/json" \
-            "https://${{ secrets.MATRIX_SERVER }}/_matrix/client/v3/rooms/${{ secrets.MATRIX_ROOM_ID_ENCODED }}/send/m.room.message/${TXN_ID}?access_token=${{ secrets.MATRIX_ACCESS_TOKEN }}" \
+            "https://${{ secrets.MATRIX_SERVER }}/_matrix/client/v3/rooms/${{ secrets.MATRIX_TO }}/send/m.room.message/${TXN_ID}?access_token=${{ secrets.MATRIX_TOKEN }}" \
             -d '{"msgtype": "m.text", "body": "New update deployed!\n\nNew commits:\n${{ needs.notify-telegram-deployment.outputs.commits }}"}'
         env:
           TXN_ID: ${{ github.run_id }}-${{ github.job }}
