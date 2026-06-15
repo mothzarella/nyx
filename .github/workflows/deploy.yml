@@ -102,16 +102,6 @@ jobs:
           echo "commits<<$EOF" >> "$GITHUB_OUTPUT"
           echo "$COMMITS" >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
-      - name: Send Telegram Message
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            New update deployed!
-
-            New commits:
-            ${{ steps.collect_new_commits.outputs.commits }}
       - name: Send Matrix Notification
         run: |
           curl -XPUT -H "Content-Type: application/json" \
