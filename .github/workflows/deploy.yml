@@ -132,11 +132,12 @@ jobs:
           echo "$COMMITS" >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
       - name: Send Matrix Message
-        uses: s3krit/matrix-message-action@v0.0.3
+        uses: lkiesow/matrix-notification@v1
         with:
-          room_id: ${{ secrets.MATRIX_TO }}
-          access_token: ${{ secrets.MATRIX_TOKEN }}
+          room: ${{ secrets.MATRIX_TO }}
+          token: ${{ secrets.MATRIX_TOKEN }}
           server: "ubiquelambda.dev"
+          message_type: m.notice
           message: |
             New update deployed!
 
