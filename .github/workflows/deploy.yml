@@ -112,6 +112,36 @@ jobs:
 
             New commits:
             ${{ steps.collect_new_commits.outputs.commits }}
+  notify-matrix-deployment:
+    name: Notify Matrix Deployment
+    needs: [check-sync, deploy-push]
+    if: needs.deploy-push.outputs.pushed == 'true'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Collect newly deployed commits
+        id: collect_new_commits
+        run: |
+          COMMITS=$(git log --pretty=format:"- %s" ${{ needs.check-sync.outputs.old_sha }}..HEAD || echo "- Multiple updates")
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "commits<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$COMMITS" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+      - name: Send Matrix Message
+        uses: s3krit/matrix-message-action@v0.0.3
+        with:
+          room_id: ${{ secrets.MATRIX_TO }}
+          access_token: ${{ secrets.MATRIX_TOKEN }}
+          server: "ubiquelambda.dev"
+          message: |
+            New update deployed!
+
+            New commits:
+            ${{ steps.collect_new_commits.outputs.commits }}
   deploy-docs:
     needs: deploy-push
     uses: ./.github/workflows/document.yml
