@@ -131,18 +131,13 @@ jobs:
           echo "commits<<$EOF" >> "$GITHUB_OUTPUT"
           echo "$COMMITS" >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
-      - name: Send Matrix Message
-        uses: lkiesow/matrix-notification@v1
-        with:
-          room: ${{ secrets.MATRIX_TO }}
-          token: ${{ secrets.MATRIX_TOKEN }}
-          server: "ubiquelambda.dev"
-          message_type: m.notice
-          message: |
-            New update deployed!
-
-            New commits:
-            ${{ steps.collect_new_commits.outputs.commits }}
+      - name: Send Matrix Notification
+        run: |
+          curl -XPUT -H "Content-Type: application/json" \
+            "https://${{ secrets.MATRIX_SERVER }}/_matrix/client/v3/rooms/${{ secrets.MATRIX_ROOM_ID_ENCODED }}/send/m.room.message/${TXN_ID}?access_token=${{ secrets.MATRIX_ACCESS_TOKEN }}" \
+            -d '{"msgtype": "m.text", "body": "New update deployed!\n\nNew commits:\n${{ needs.notify-telegram-deployment.outputs.commits }}"}'
+        env:
+          TXN_ID: ${{ github.run_id }}-${{ github.job }}
   deploy-docs:
     needs: deploy-push
     uses: ./.github/workflows/document.yml
