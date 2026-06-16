@@ -28,7 +28,7 @@ let
   path = lib.makeBinPath [
     findutils
     ripgrep
-    formatter
+    formatter.passthru.nixFormatter
     statix
     deadnix
     prettier
