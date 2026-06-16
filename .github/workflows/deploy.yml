@@ -104,11 +104,13 @@ jobs:
           echo "$EOF" >> "$GITHUB_OUTPUT"
       - name: Send Matrix Notification
         run: |
-          curl -XPUT -H "Content-Type: application/json" \
+          jq -n --arg commits "$COMMITS" '{"msgtype": "m.notice", "body": "New update deployed!\n\nNew commits:\n\($commits)"}' | \
+          curl --fail -sS -X PUT -H "Content-Type: application/json" \
             "https://${{ secrets.MATRIX_SERVER }}/_matrix/client/v3/rooms/${{ secrets.MATRIX_TO }}/send/m.room.message/${TXN_ID}?access_token=${{ secrets.MATRIX_TOKEN }}" \
-            -d '{"msgtype": "m.text", "body": "New update deployed!\n\nNew commits:\n${{ steps.collect_new_commits.outputs.commits }}"}'
+            -d @-
         env:
           TXN_ID: ${{ github.run_id }}-${{ github.job }}
+          COMMITS: ${{ steps.collect_new_commits.outputs.commits }}
   deploy-docs:
     needs: deploy-push
     uses: ./.github/workflows/document.yml
