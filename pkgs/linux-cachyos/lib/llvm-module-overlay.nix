@@ -71,6 +71,9 @@ with prevModules;
   );
   # perf needs systemtap fixed first
   perf = markBroken perf;
+  ryzen-smu = prevModules.ryzen-smu.overrideAttrs (prevAttrs: {
+    makeFlags = (nyxUtils.removeByPrefix "CC=" prevAttrs.makeFlags) ++ kernel.commonMakeFlags;
+  });
   virtualbox =
     multiOverride virtualbox
       {
