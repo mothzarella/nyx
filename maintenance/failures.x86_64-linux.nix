@@ -22,7 +22,6 @@
   "linuxPackages_cachyos.pktgen" = "/nix/store/655c5faslm37z8q93anq3mgb0gnhsaav-pktgen-x86_64-unknown-linux-gnu-24.10.3";
   "linuxPackages_cachyos.rr-zen_workaround" = "/nix/store/5pw5p98liqvlj6g7z6rbn4rj4nc5ci0m-rr-zen_workaround-x86_64-unknown-linux-gnu-5.9.0";
   "linuxPackages_cachyos.rtl8821cu" = "/nix/store/8ffh6q8yhvvb8hg7z0i4gnwdnis651qj-rtl8821cu-x86_64-unknown-linux-gnu-7.0.12-unstable-2025-12-15";
-  "linuxPackages_cachyos.ryzen-smu" = "/nix/store/4cd0p6qm239y385n7dvbmqscb9zh9c3f-ryzen-smu-7.0.12-x86_64-unknown-linux-gnu-0.1.7-unstable-2026-04-25";
   "linuxPackages_cachyos.shufflecake" = "/nix/store/lgvq7vhdmnl57vbnj8vvy518axzmfgwq-shufflecake-0.5.8-7.0.12-x86_64-unknown-linux-gnu";
   "linuxPackages_cachyos.system76-acpi" = "/nix/store/87lwrgv4vnjlwba6xn791priqx6avd5k-system76-acpi-module-1.0.2-7.0.12-x86_64-unknown-linux-gnu";
   "linuxPackages_cachyos.systemtap" = "/nix/store/793rrgj376ng60s9swq1fklphhbqa96q-systemtap-5.4";
