@@ -30,8 +30,6 @@ let
     inherit (pkgsLLVM) callPackage;
     stdenv = pkgsLLVM.clangStdenv;
 
-    packagesExtend = import ./lib/llvm-module-overlay.nix inputs;
-
     zfsOverride = {
       inherit (final)
         autoreconfHook269

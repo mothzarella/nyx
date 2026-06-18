@@ -168,13 +168,20 @@ let
     inherit cachyOverride;
   };
 
+  llvmModuleOverlay = import ./lib/llvm-module-overlay.nix inputs;
+
   basePackages = linuxPackagesFor kernel;
   packagesWithOurs = basePackages.extend addOurs;
+  packagesWithLtoModuleOverlay =
+    if cachyConfig.useLTO != "none" then
+      packagesWithOurs.extend (llvmModuleOverlay kernel)
+    else
+      packagesWithOurs;
   packagesWithExtend =
     if packagesExtend == null then
-      packagesWithOurs
+      packagesWithLtoModuleOverlay
     else
-      packagesWithOurs.extend (packagesExtend kernel);
+      packagesWithLtoModuleOverlay.extend (packagesExtend kernel);
   packagesWithRemovals = removeAttrs packagesWithExtend [
     "zfs"
     "zfs_2_1"
