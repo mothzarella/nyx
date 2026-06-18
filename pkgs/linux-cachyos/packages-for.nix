@@ -24,6 +24,7 @@
   withPrivateHDR ? false,
   withoutDebug ? false,
   description ? "Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements",
+  # For update script
   # For flakes
   inputs,
 }:
@@ -80,10 +81,16 @@ let
       commonMakeFlags
       ;
   };
-  kconfigToNix = callPackage ./lib/kconfig-to-nix.nix {
+  kconfigToNix = inputs.final.callPackage ./lib/kconfig-to-nix.nix {
     configfile = preparedConfigfile;
   };
   linuxConfigTransfomed = import configPath;
+
+  updaterScript =
+    if withUpdateScript != null then
+      inputs.final.callPackage ./update.nix { inherit (cachyConfig) withUpdateScript; }
+    else
+      null;
 
   kernel = callPackage ./kernel.nix {
     inherit
@@ -91,6 +98,7 @@ let
       stdenv
       kconfigToNix
       commonMakeFlags
+      updaterScript
       ;
     kernelPatches = [ ];
     configfile = preparedConfigfile;

@@ -3,7 +3,7 @@
   kconfigToNix,
   config,
   configfile,
-  callPackage,
+  updaterScript ? null,
   nyxUtils,
   lib,
   linuxManualConfig,
@@ -16,11 +16,6 @@
 }:
 let
   version = cachyConfig.versions.linux.version;
-  updaterScript =
-    if cachyConfig.withUpdateScript != null then
-      callPackage ./update.nix { inherit (cachyConfig) withUpdateScript; }
-    else
-      null;
 in
 (linuxManualConfig {
   inherit
@@ -74,5 +69,5 @@ in
         isLibre = false;
         updateScript = null;
       }
-      // nyxUtils.optionalAttr "updateScript" (cachyConfig.withUpdateScript != null) updaterScript;
+      // nyxUtils.optionalAttr "updateScript" (updaterScript != null) updaterScript;
   })
