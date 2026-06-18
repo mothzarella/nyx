@@ -1,4 +1,4 @@
-{ ... }:
+_inputs:
 let
   testingDM = "sddm"; # "sddm" | "gdm"
   testingDE = "plasma6"; # "plasma6" | "gnome"
