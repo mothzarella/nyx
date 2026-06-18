@@ -61,12 +61,11 @@ with prevModules;
     _finalNV: prevNV: with prevNV; {
       production = fixNoVideo production;
       stable = fixNoVideo stable;
-      beta = fixNoVideo beta;
       vulkan_beta = fixNoVideo vulkan_beta;
       cachyos = final.nvidia_cachyos;
       latest = fixNoVideo latest;
       legacy_535 = fixNoVideo legacy_535;
-      legacy_470 = markBroken legacy_470;
+      legacy_580 = fixNoVideo legacy_580;
     }
   );
   # perf needs systemtap fixed first
