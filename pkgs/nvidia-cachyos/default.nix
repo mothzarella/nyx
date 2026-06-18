@@ -50,7 +50,7 @@ else
     echo "nvidia-cachyos is unsupported on ${final.system}" > $out/README
   '').overrideAttrs
     (prevAttrs: {
-      meta = prevAttrs.meta // {
+      meta = (prevAttrs.meta or { }) // {
         broken = true;
       };
     })
