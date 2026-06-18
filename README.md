@@ -391,11 +391,15 @@ enable_seq  hotplug_seq  nr_rejected  root  state  switch_all
 <pre lang="nix"><code class="language-nix">
 { pkgs, ... }:
 {
-  boot.kernelPackages = pkgs.linuxPackages_cachyos.cachyOverride { mArch = "GENERIC_V4"; };
+  boot.kernelPackages =
+    pkgs.linuxPackages_cachyos.cachyOverride
+      { cachyVars = pkgs.linuxPackages_cachyos.kernel.cachyConfig.cachyVars // { "_processor_opt" = "GENERIC_V3"; }; }
 }
 </code></pre>
 
 <p>Use either <code>GENERIC_V2</code>, <code>GENERIC_V3</code>, <code>GENERIC_V4</code>, or <code>ZEN4</code>. We don't provide cache for these.</p>
+
+<p>We support a few other variables from CachyOS' PKGBUILD in the <code>cachyVars</code> atttrset.</p>
 
 <h2 id="criteria-for-new-packages">Criteria for new packages</h2>
 
