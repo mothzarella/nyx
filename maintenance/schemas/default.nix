@@ -4,7 +4,7 @@
 }:
 {
   inherit (flake-schemas.schemas)
-    devShells
+    checks
     formatter
     homeModules
     legacyPackages

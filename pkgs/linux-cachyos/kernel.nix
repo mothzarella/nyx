@@ -13,10 +13,6 @@
   kernelPatches ? [ ],
   features ? null,
   randstructSeed ? "",
-  # For tests
-  kernelPackages,
-  flakes,
-  final,
 }:
 let
   version = cachyConfig.versions.linux.version;
@@ -77,13 +73,6 @@ in
         isHardened = cachyConfig.cpuSched == "hardened";
         isLibre = false;
         updateScript = null;
-        tests = (prevAttrs.passthru.tests or { }) // {
-          plymouth = import ./test.nix {
-            inherit kernelPackages;
-            inherit (flakes) nixpkgs;
-            chaotic = flakes.self;
-          } final;
-        };
       }
       // nyxUtils.optionalAttr "updateScript" (cachyConfig.withUpdateScript != null) updaterScript;
   })

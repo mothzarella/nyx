@@ -95,9 +95,6 @@ let
     kernelPatches = [ ];
     configfile = preparedConfigfile;
     config = linuxConfigTransfomed;
-    # For tests
-    inherit (inputs) flakes final;
-    kernelPackages = packagesWithRightPlatforms;
   };
 
   commonMakeFlagsBintools =

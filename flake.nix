@@ -69,6 +69,18 @@
             };
           };
 
+          # For CI
+          checks =
+            (accu.checks or { })
+            // (
+              if system == "x86_64-linux" then
+                {
+                  ${system} = import ./checks inputs pkgs;
+                }
+              else
+                { }
+            );
+
           # I would prefer if we had something stricter, with attribute alphabetical
           # sorting, and optimized for git's diffing. But this is the closer we have.
           formatter = (accu.formatter or { }) // {

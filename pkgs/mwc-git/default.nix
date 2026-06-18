@@ -8,7 +8,7 @@ let
   pkgsWithOverlay = final.extend (
     self: super: {
 
-      wlroots_0_18 = super.wlroots_0_18.overrideAttrs (old: {
+      wlroots_0_18 = super.wlroots_0_19.overrideAttrs (old: {
         mesonFlags = (old.mesonFlags or [ ]) ++ [
           "-Dwerror=false"
         ];

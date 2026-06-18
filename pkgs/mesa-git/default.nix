@@ -1,11 +1,9 @@
 {
   final,
   final64 ? final,
-  flakes,
   prev,
   gitOverride,
   nyxUtils,
-  mesaTestAttrs ? final,
   ...
 }:
 
@@ -69,13 +67,5 @@ gitOverride (current: {
       [ "imagination-experimental" ]
       [ "imagination" ]
     ) prevAttrs.mesonFlags;
-
-    # test and accessible information
-    passthru = prevAttrs.passthru // {
-      tests.smoke-test = import ./test.nix {
-        inherit (flakes) nixpkgs;
-        chaotic = flakes.self;
-      } mesaTestAttrs;
-    };
   };
 })
