@@ -358,8 +358,17 @@ in
 
   river_git = callOverride ../pkgs/river-git { };
 
-  rust-bindgen_kernel-lto = cachyosPackages.cachyos-lto.kernel_configfile.passthru.rust-bindgen;
-  rustc_kernel-lto = cachyosPackages.cachyos-lto.kernel_configfile.passthru.rustc;
+  rust-bindgen_kernel-lto =
+    if final.stdenv.hostPlatform.isLinux && final.stdenv.hostPlatform.isx86_64 then
+      cachyosPackages.cachyos-lto.kernel_configfile.passthru.rust-bindgen
+    else
+      throw "rust-bindgen_kernel-lto is not supported on this platform";
+
+  rustc_kernel-lto =
+    if final.stdenv.hostPlatform.isLinux && final.stdenv.hostPlatform.isx86_64 then
+      cachyosPackages.cachyos-lto.kernel_configfile.passthru.rustc
+    else
+      throw "rustc_kernel-lto is not supported on this platform";
 
   rustc_nightly = rust-overlay.packages.${system}.rust-nightly;
 
