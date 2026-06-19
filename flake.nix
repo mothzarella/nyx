@@ -29,12 +29,6 @@
           legacyPackages = (accu.legacyPackages or { }) // {
             ${system} = accu.utils.applyOverlay { inherit pkgs; };
           };
-          packages = (accu.packages or { }) // {
-            ${system} = accu.utils.applyOverlay {
-              inherit pkgs;
-              onlyDerivations = true;
-            };
-          };
 
           # Needed to build without impure
           unrestrictedPackages = (accu.unrestrictedPackages or { }) // {

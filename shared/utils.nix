@@ -10,7 +10,6 @@ rec {
       merge ? false,
       overlay ? nyxOverlay,
       nyxPkgs ? null,
-      onlyDerivations ? false,
       pkgs,
     }:
     let
@@ -19,14 +18,8 @@ rec {
         callPackage = pkgs.newScope overlayFinal;
       };
       ourPackages = if nyxPkgs != null then nyxPkgs else overlay overlayFinal pkgs;
-      preFilter = if merge then overlayFinal else ourPackages;
     in
-    if onlyDerivations then
-      pkgs.lib.attrsets.filterAttrs (
-        _k: v: (builtins.tryEval v).success && pkgs.lib.attrsets.isDerivation v
-      ) preFilter
-    else
-      preFilter;
+    if merge then overlayFinal else ourPackages;
 
   # When `removeByBaseName` and `removeByURL` can't help, use this to drop patches.
   dropN = qty: list: lib.lists.take (builtins.length list - qty) list;
