@@ -169,6 +169,8 @@ in
 
   distrobox_git = callOverride ../pkgs/distrobox-git { };
 
+  dns-over-wikipedia_git = final.callPackage ../pkgs/dns-over-wikipedia-git { };
+
   dr460nized-kde-theme = final.callPackage ../pkgs/dr460nized-kde-theme { };
 
   evil-helix_git = callOverride ../pkgs/helix-git { evil = true; };
