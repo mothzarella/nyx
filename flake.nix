@@ -9,34 +9,15 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Third-party republished repositories
-    jovian = {
-      url = "github:Jovian-Experiments/Jovian-NixOS";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        nix-github-actions.follows = ""; # https://github.com/NixOS/nix/issues/7807
-      };
-    };
     # Used by "schemas" output (for FlakeHub and "nix show", pinned)
     flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/=0.1.5.tar.gz";
-    # Newer rustc
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # Pinned to the version we're using (sorry to forward this to your locks, we need it cached)
-    niks3 = {
-      url = "github:Mic92/niks3/c74d275536d9a38ff279b498612fae0fd68cfe85";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        treefmt-nix.follows = ""; # https://github.com/NixOS/nix/issues/7807
-      };
-    };
   };
 
   outputs =
     { self, nixpkgs, ... }@inputs:
     let
+      flakes = (import ./vendor) // inputs;
+
       eachSystem =
         accu: system:
         let
@@ -47,12 +28,6 @@
           # Exposes the packages created by the overlay.
           legacyPackages = (accu.legacyPackages or { }) // {
             ${system} = accu.utils.applyOverlay { inherit pkgs; };
-          };
-          packages = (accu.packages or { }) // {
-            ${system} = accu.utils.applyOverlay {
-              inherit pkgs;
-              onlyDerivations = true;
-            };
           };
 
           # Needed to build without impure
@@ -75,7 +50,7 @@
             // (
               if system == "x86_64-linux" then
                 {
-                  ${system} = import ./checks inputs pkgs;
+                  ${system} = import ./checks flakes pkgs;
                 }
               else
                 { }
@@ -90,13 +65,13 @@
 
       universals = {
         # To fix `nix show` and FlakeHub
-        schemas = import ./maintenance/schemas { flakes = inputs; };
+        schemas = import ./maintenance/schemas { inherit flakes; };
 
         # The stars: our overlay and our modules.
-        overlays.default = import ./overlays { flakes = inputs; };
-        overlays.cache-friendly = import ./overlays/cache-friendly.nix { flakes = inputs; };
-        nixosModules = import ./modules/nixos { flakes = inputs; };
-        homeModules = import ./modules/home-manager { flakes = inputs; };
+        overlays.default = import ./overlays { inherit flakes; };
+        overlays.cache-friendly = import ./overlays/cache-friendly.nix { inherit flakes; };
+        nixosModules = import ./modules/nixos { inherit flakes; };
+        homeModules = import ./modules/home-manager { inherit flakes; };
         homeManagerModules = self.homeModules;
 
         # Dev stuff.

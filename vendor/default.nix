@@ -1,0 +1,14 @@
+let
+  fetchFlake =
+    {
+      url,
+      lock,
+      ...
+    }:
+    builtins.getFlake (builtins.unsafeDiscardStringContext "${url}${lock}");
+
+  forEachFlake =
+    name: _directory_or_regular:
+    fetchFlake (builtins.fromJSON (builtins.readFile ./flakes/${name}/version.json));
+in
+builtins.mapAttrs forEachFlake (builtins.readDir ./flakes)

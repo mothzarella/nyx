@@ -47,11 +47,17 @@ jobs:
 
           git checkout -b "$BRANCH_NAME"
 
+          OLD_COMMIT=$(git rev-parse HEAD)
+
           nix flake update || exit 1
-          git diff --exit-code flake.lock && exit 0
+          git diff --exit-code flake.lock
 
           git add -A
           git commit -m "flakes: bump $DATE"
+
+          vendor/update.sh
+
+          [ "$(git rev-parse HEAD)" == "$OLD_COMMIT" ] && exit 0
 
           # Check against remote branch: Is this exact state already pushed?
           if git ls-remote --exit-code --heads origin "$BRANCH_NAME" > /dev/null; then
