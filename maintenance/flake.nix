@@ -1,12 +1,12 @@
 {
   inputs = {
     chaotic.url = "../";
-    compare-to.url = "../";
+    compare-to.follows = "chaotic";
     systems.url = "github:nix-systems/default";
     yafas = {
       url = "github:UbiqueLambda/yafas";
       inputs.systems.follows = "systems";
-      inputs.flake-schemas.follows = "chaotic/flake-schemas";
+      inputs.flake-schemas.follows = "";
     };
   };
   outputs =
