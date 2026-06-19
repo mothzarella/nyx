@@ -23,16 +23,15 @@
       what = "attrset";
     };
   };
-  homeManagerModules = flake-schemas.schemas.homeModules;
-  unrestrictedPackages = {
-    version = 1;
+  homeManagerModules = flake-schemas.schemas.homeModules // {
+    doc = ''
+      **DEPRECATED**. Use `homeModules` instead.
+    '';
+  };
+  unrestrictedPackages = flake-schemas.schemas.legacyPackages // {
     doc = ''
       Same as legacyPackages, but with allowUnfree, allowUnsupported, and required licenses to build.
     '';
-    inventory = _output: {
-      shortDescription = "Buildable attrset for CI.";
-      what = "attrset";
-    };
   };
   utils = {
     version = 1;
@@ -43,6 +42,16 @@
       children = builtins.mapAttrs (_name: _value: {
         what = "function";
       }) (builtins.removeAttrs output [ "_description" ]);
+    };
+  };
+  vendored = {
+    version = 1;
+    doc = ''
+      Flake inputs we don't want in our users' flake lock.
+    '';
+    inventory = _output: {
+      shortDescription = "Exposes other flake inputs.";
+      what = "attrset";
     };
   };
 }

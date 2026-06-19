@@ -157,7 +157,7 @@ But you'll have access to all packages, the cache, and the registry.</p>
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [
           ./home-manager/default.nix
-          chaotic.homeManagerModules.default # IMPORTANT
+          chaotic.homeModules.default # IMPORTANT
         ];
       };
     };

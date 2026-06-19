@@ -10,13 +10,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Used by "schemas" output (for FlakeHub and "nix show", pinned)
-    flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/=0.1.5.tar.gz";
+    flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/=0.5.0.tar.gz";
   };
 
   outputs =
     { self, nixpkgs, ... }@inputs:
     let
-      flakes = (import ./vendor) // inputs;
+      vendored = import ./vendor;
+      flakes = vendored // inputs;
 
       eachSystem =
         accu: system:
@@ -73,6 +74,9 @@
         nixosModules = import ./modules/nixos { inherit flakes; };
         homeModules = import ./modules/home-manager { inherit flakes; };
         homeManagerModules = self.homeModules;
+
+        # In case you need something from our vendored flakes
+        inherit vendored;
 
         # Dev stuff.
         utils = import ./shared/utils.nix {

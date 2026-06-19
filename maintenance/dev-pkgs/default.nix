@@ -1,7 +1,7 @@
 base:
 {
   flakes,
-  homeManagerModules ? self.homeManagerModules,
+  homeModules ? self.homeModules,
   nixpkgs ? flakes.nixpkgs,
   home-manager ? flakes.home-manager,
   packages ? self._dev.legacyPackages,
@@ -51,7 +51,7 @@ let
       };
       documentation = callPackage ../tools/document {
         allPackages = nyxPkgs;
-        homeManagerModule = homeManagerModules.default;
+        homeManagerModule = homeModules.default;
         inherit
           nixpkgs
           nyxRecursionHelper
