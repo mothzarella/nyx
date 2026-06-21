@@ -50,7 +50,6 @@ jobs:
           OLD_COMMIT=$(git rev-parse HEAD)
 
           nix flake update || exit 1
-          git diff --exit-code flake.lock
 
           git add -A
           git commit -m "flakes: bump $DATE"
