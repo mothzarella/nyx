@@ -8,7 +8,7 @@
   nss_git,
   nyxUtils,
   stdenv,
-  # temporary fix:
+  # Temporary fixes:
   rust-cbindgen,
   fetchFromGitHub,
   rustPlatform,
@@ -17,21 +17,21 @@
 
 let
   rust-cbindgen_latest =
-    if rust-cbindgen.version == "0.29.0" then
+    if rust-cbindgen.version == "0.29.2" then
       rust-cbindgen.overrideAttrs (prevAttrs: rec {
-        version = "0.29.1";
+        version = "0.29.4";
 
         src = fetchFromGitHub {
           owner = "mozilla";
           repo = "cbindgen";
-          rev = "v${version}";
-          hash = "sha256-w1vLgdyxyZNnPQUJL6yYPHhB99svsryVkwelblEAisQ=";
+          tag = "v${version}";
+          hash = "sha256-leeHOwpzXuzg2cTjXehBnCsS+dvU4eIIFtWKeCee20U=";
         };
 
         cargoDeps = rustPlatform.fetchCargoVendor {
           inherit src;
           inherit (prevAttrs.cargoDeps) name;
-          hash = "sha256-POpdgDlBzHs4/fgV1SWSWcxVrn0UTTfvqYBRGqwD98s=";
+          hash = "sha256-f6YoDoiVoh0BVPYHFO1FsdI4OCsF+LY72QaD57StdIQ=";
         };
       })
     else
@@ -46,12 +46,13 @@ let
     branding = "browser/branding/nightly";
     src = fetchurl {
       inherit (current) hash;
-      url = "https://hg.mozilla.org/mozilla-central/archive/${current.rev}.zip";
+      url = "https://codeload.github.com/mozilla-firefox/firefox/tar.gz/${current.rev}";
+      name = "firefox.tar.gz";
     };
 
     meta = {
-      description = "A web browser built from Firefox Nightly source tree";
-      homepage = "http://www.mozilla.com/en-US/firefox/";
+      description = "Web browser built from Firefox Nightly source tree";
+      homepage = "https://www.firefox.com/";
       maintainers = with lib.maintainers; [ pedrohlc ];
       platforms = lib.platforms.unix;
       broken = stdenv.buildPlatform.is32bit;
@@ -66,26 +67,34 @@ let
   postOverride = prevAttrs: {
     patches =
       nyxUtils.removeByBaseNames [
-        "136-no-buildconfig.patch"
         "133-env-var-for-system-dir.patch"
-        "142-relax-apple-sdk.patch"
-      ] prevAttrs.patches
+        "136-no-buildconfig.patch"
+        "139-wayland-drag-animation.patch"
+        "140-bindgen-string-view.patch"
+      ] (prevAttrs.patches or [ ])
       ++ [
         ./env_var_for_system_dir-ff-unstable.patch
         ./no-buildconfig-ffx-unstable.patch
         ./relax-apple-sdk.patch
       ];
-    nativeBuildInputs = builtins.map (
+
+    env = (prevAttrs.env or { }) // {
+      MOZ_SOURCE_REPO = "https://github.com/mozilla-firefox/firefox";
+      MOZ_SOURCE_CHANGESET = current.rev;
+      MOZ_INCLUDE_SOURCE_INFO = "1";
+    };
+
+    nativeBuildInputs = map (
       pkg: if pkg.pname or "" == "rust-cbindgen" then rust-cbindgen_latest else pkg
-    ) prevAttrs.nativeBuildInputs;
+    ) (prevAttrs.nativeBuildInputs or [ ]);
 
     buildInputs =
-      prevAttrs.buildInputs or [ ]
+      (prevAttrs.buildInputs or [ ])
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         apple-sdk_26
       ];
 
-    passthru = prevAttrs.passthru // {
+    passthru = (prevAttrs.passthru or { }) // {
       rust-cbindgen = rust-cbindgen_latest;
     };
   };

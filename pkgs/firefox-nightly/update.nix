@@ -7,7 +7,9 @@
   jq,
   moreutils,
   nix,
+  git-cinnabar,
 }:
+
 let
   path = lib.makeBinPath [
     coreutils
@@ -15,41 +17,94 @@ let
     git
     jq
     moreutils # sponge
-    nix # nix-prefetch-url, nix-hash
+    nix # nix store prefetch-file
+    git-cinnabar
   ];
 in
 writeShellScript "firefox-nightly-update" ''
   set -euo pipefail
 
-  PATH=${path}
-  VERSION_JSON="''${VERSION_JSON:-pkgs/firefox-nightly/version.json}"
+  export PATH=${path}
 
-  _LATEST_VER=$(curl -s 'https://product-details.mozilla.org/1.0/firefox_versions.json' | jq -r .FIREFOX_NIGHTLY)
-  _LOCAL_VER=$(jq -r .version "$VERSION_JSON")
-  _LOCAL_REV=$(jq -r .rev "$VERSION_JSON")
-  _LATEST_REV=$(curl -s "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-''${_LATEST_VER}.en-US.linux-x86_64.json" | jq -r .moz_source_stamp)
-  [ "$_LOCAL_REV" == "$_LATEST_REV" ] && exit 0
+  version_json="''${VERSION_JSON:-pkgs/firefox-nightly/version.json}"
+  mozilla_versions_url="https://product-details.mozilla.org/1.0/firefox_versions.json"
+  github_repo="https://github.com/mozilla-firefox/firefox"
+  hg_repo="https://hg-edge.mozilla.org/mozilla-central"
 
-  _LATEST_URL="https://hg.mozilla.org/mozilla-central/archive/''${_LATEST_REV}.zip";
-  _LATEST_SHA256=$(nix-prefetch-url --type sha256 "$_LATEST_URL")
-  _LATEST_HASH=$(nix-hash --to-sri --type sha256 $_LATEST_SHA256)
+  fetch_json() {
+    curl -fsSL "$1"
+  }
 
-  JQ_ARGS=(
-    --arg version "$_LATEST_VER"
-    --arg rev "$_LATEST_REV"
-    --arg hash "$_LATEST_HASH"
+  json_field() {
+    jq -er "$1"
+  }
+
+  git_short() {
+    printf '%s' "$1" | cut -c1-9
+  }
+
+  latest_version=$(
+    fetch_json "$mozilla_versions_url" |
+      json_field '.FIREFOX_NIGHTLY'
   )
 
-  JQ_OPS=(
-    '.rev = $rev'
-    '| .version = $version'
-    '| .hash = $hash'
+  local_version=$(jq -er '.version' "$version_json")
+  local_rev=$(jq -er '.rev' "$version_json")
+
+  nightly_metadata_url="https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-$latest_version.en-US.linux-x86_64.json"
+
+  latest_hg_rev=$(
+    fetch_json "$nightly_metadata_url" |
+      json_field '.moz_source_stamp'
   )
 
-  jq "''${JQ_ARGS[@]}" \
-    "''${JQ_OPS[*]}" \
-    "$VERSION_JSON" | sponge "$VERSION_JSON"
+  tmpdir=$(mktemp -d)
+  trap 'rm -rf "$tmpdir"' EXIT
 
-  git add $VERSION_JSON
-  git commit -m "firefox_nightly: $_LOCAL_VER-''${_LOCAL_REV::9} -> $_LATEST_VER-''${_LATEST_REV::9}"
+  map_dir="$tmpdir/ff-map"
+
+  git init --quiet "$map_dir"
+
+  git -C "$map_dir" \
+    -c cinnabar.graft="$github_repo" \
+    cinnabar fetch \
+    "hg::$hg_repo" \
+    "$latest_hg_rev"
+
+  latest_rev=$(
+    git -C "$map_dir" cinnabar hg2git "$latest_hg_rev"
+  )
+
+  if [ "$local_rev" = "$latest_rev" ]; then
+    echo "firefox-nightly is already up to date: $local_version-$(git_short "$local_rev")"
+    exit 0
+  fi
+
+  latest_url="https://codeload.github.com/mozilla-firefox/firefox/tar.gz/$latest_rev"
+
+  latest_hash=$(
+    nix --extra-experimental-features nix-command \
+      store prefetch-file \
+      --json \
+      --hash-type sha256 \
+      --name "firefox.tar.gz" \
+      "$latest_url" |
+      jq -er '.hash'
+  )
+
+  jq \
+    --arg version "$latest_version" \
+    --arg rev "$latest_rev" \
+    --arg hash "$latest_hash" \
+    '
+      .rev = $rev
+      | .version = $version
+      | .hash = $hash
+    ' \
+    "$version_json" |
+    sponge "$version_json"
+
+  git add "$version_json"
+
+  git commit -m "firefox-nightly: $local_version-$(git_short "$local_rev") -> $latest_version-$(git_short "$latest_rev")"
 ''
