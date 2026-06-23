@@ -28,7 +28,7 @@ jobs:
             accept-flake-config = true
             system-features = big-parallel gccarch-x86-64-v3
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
       # config to commit
