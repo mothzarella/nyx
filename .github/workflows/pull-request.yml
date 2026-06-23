@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          allow-unsafe-pr-checkout: ${{ contains(github.event.pull_request.labels.*.name, 'safe-to-test') || contains(fromJSON('["COLLABORATOR", "MEMBER", "OWNER"]'), github.event.pull_request.author_association) }}
       - name: Run linter
         run: nix run ./maintenance#chaotic-nyx.linter
         id: linter
