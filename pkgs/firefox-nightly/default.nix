@@ -37,10 +37,12 @@ let
     else
       rust-cbindgen;
 
-  mach = buildMozillaMach rec {
+  binaryName = "firefox-nightly";
+
+  mach = buildMozillaMach {
     pname = "firefox-nightly";
-    binaryName = "firefox-nightly";
-    inherit (current) version;
+    inherit binaryName;
+    version = with current; "${version}-${buildId}-${builtins.substring 0 7 rev}";
     applicationName = "Firefox Nightly";
     requireSigning = false;
     branding = "browser/branding/nightly";

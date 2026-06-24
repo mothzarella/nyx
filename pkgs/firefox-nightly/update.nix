@@ -50,12 +50,19 @@ writeShellScript "firefox-nightly-update" ''
 
   local_version=$(jq -er '.version' "$version_json")
   local_rev=$(jq -er '.rev' "$version_json")
+  local_build_id=$(jq -er '.buildId' "$version_json")
 
   nightly_metadata_url="https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-$latest_version.en-US.linux-x86_64.json"
+  nightly_metadata_json=$(fetch_json "$nightly_metadata_url")
 
   latest_hg_rev=$(
-    fetch_json "$nightly_metadata_url" |
+    printf "%s\n" "$nightly_metadata_json" |
       json_field '.moz_source_stamp'
+  )
+
+  latest_build_id=$(
+    printf "%s\n" "$nightly_metadata_json" |
+      json_field '.buildid'
   )
 
   tmpdir=$(mktemp -d)
@@ -95,9 +102,11 @@ writeShellScript "firefox-nightly-update" ''
   jq \
     --arg version "$latest_version" \
     --arg rev "$latest_rev" \
+    --arg build_id "$latest_build_id" \
     --arg hash "$latest_hash" \
     '
       .rev = $rev
+      | .buildId = $build_id
       | .version = $version
       | .hash = $hash
     ' \
@@ -106,5 +115,5 @@ writeShellScript "firefox-nightly-update" ''
 
   git add "$version_json"
 
-  git commit -m "firefox-nightly: $local_version-$(git_short "$local_rev") -> $latest_version-$(git_short "$latest_rev")"
+  git commit -m "firefox-nightly: $local_version-$local_build_id-$(git_short "$local_rev") -> $latest_version-$latest_build_id-$(git_short "$latest_rev")"
 ''
