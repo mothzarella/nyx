@@ -32,6 +32,10 @@
     doc = ''
       Same as legacyPackages, but with allowUnfree, allowUnsupported, and required licenses to build.
     '';
+    inventory = _output: {
+      shortDescription = "Building set (legacyPackages + allowUnfree + allowUnsupported)";
+      what = "legacyPackages";
+    };
   };
   utils = {
     version = 1;
