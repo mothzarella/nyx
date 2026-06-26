@@ -117,7 +117,7 @@ stdenv.mkDerivation (finalAttrs: {
       mit
     ];
     platforms = builtins.attrNames sources;
-    hydraPlatforms = [ ];
+    hydraPlatforms = [ "x86_64-linux" ];
     maintainers = with lib.maintainers; [
       dr460nf1r3
     ];

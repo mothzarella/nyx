@@ -61,6 +61,7 @@ let
       maxSilent = 14400;
       license = lib.licenses.mpl20;
       mainProgram = binaryName;
+      hydraPlatforms = [ "x86_64-linux" ];
     };
 
     updateScript = callPackage ./update.nix { };

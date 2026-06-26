@@ -35,12 +35,18 @@ let
       mainOutPath = builtins.unsafeDiscardStringContext drv.outPath;
       thisVar = nyxUtils.drvHash drv;
       failed = failures.${key} or null;
+      unsupportedPlatform = nyxRecursionHelper.isImplicitlyUnsupported (drv.meta.hydraPlatforms or [ ]);
     in
     if mainOutPath == failed then
       doNotBuild key {
         broken = mainOutPath;
         this = thisVar;
         inherit system;
+      }
+    else if (drv.meta.dontDistribute or false) || unsupportedPlatform then
+      doNotBuild key {
+        warn = "unsupported on builder";
+        this = thisVar;
       }
     else
       {
