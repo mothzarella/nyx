@@ -61,7 +61,7 @@ rec {
     platforms != [ ]
     && !(
       builtins.elem system platforms
-      || lib.systems.inspect.matchAnyAttrs (builtins.filter builtins.isAttrs platforms) parsedSystem
+      || lib.systems.inspect.matchAnyPattern (builtins.filter builtins.isAttrs platforms) parsedSystem
     );
 
   # drv.meta.badPlatforms -> result
@@ -70,7 +70,7 @@ rec {
     badPlatforms != [ ]
     && (
       builtins.elem system badPlatforms
-      || lib.systems.inspect.matchAnyAttrs (builtins.filter builtins.isAttrs badPlatforms) parsedSystem
+      || lib.systems.inspect.matchAnyPattern (builtins.filter builtins.isAttrs badPlatforms) parsedSystem
     );
 
   # warnFn: k -> v -> message -> result
