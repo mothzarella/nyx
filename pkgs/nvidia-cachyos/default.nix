@@ -28,9 +28,11 @@ let
         updateScript = updater;
       };
     });
+
+  isSupported = linuxPackages_cachyos.recurseForDerivations or true;
 in
 
-if cachyosLinuxPackages ? nvidiaPackages then
+if isSupported then
   fixNoVideo (
     cachyosLinuxPackages.nvidiaPackages.mkDriver {
       inherit (versions) version;
@@ -45,12 +47,4 @@ if cachyosLinuxPackages ? nvidiaPackages then
     }
   )
 else
-  (final.runCommand "unsupported-nvidia-cachyos" { } ''
-    mkdir -p $out
-    echo "nvidia-cachyos is unsupported on ${final.system}" > $out/README
-  '').overrideAttrs
-    (prevAttrs: {
-      meta = (prevAttrs.meta or { }) // {
-        broken = true;
-      };
-    })
+  throw "nvidia-cachyos is unsupported on this system"

@@ -60,21 +60,12 @@ let
     description = "Linux EEVDF-BORE scheduler Kernel by CachyOS built with LLVM and Thin LTO";
   };
 
-  # Evaluation hack
-  brokenReplacement = final.hello.overrideAttrs (prevAttrs: {
-    meta = prevAttrs.meta // {
-      platform = [ ];
-      broken = true;
-    };
-  });
-
   isUnsupported = !isx86_64 || !isLinux;
 
   mkCachyKernel =
     if isUnsupported then
-      # Evaluation hack
       _attrs: {
-        kernel = brokenReplacement;
+        kernel = throw "Cachyos kernels are not supported on this system";
         recurseForDerivations = false;
       }
     else
@@ -184,12 +175,16 @@ in
     packagesExtend = preventBuildingKernelModules;
   };
 
-  zfs = final.zfs_2_4.overrideAttrs (prevAttrs: {
-    src = if isUnsupported then brokenReplacement else gccKernel.zfs_cachyos.src;
-    patches = [ ];
-    passthru = prevAttrs.passthru // {
-      kernelModuleAttribute = "zfs_cachyos";
-    };
-    postPatch = builtins.replaceStrings [ "grep --quiet '^Linux-M" ] [ "# " ] prevAttrs.postPatch;
-  });
+  zfs =
+    if isUnsupported then
+      throw "Cachyos ZFS is not supported on this system"
+    else
+      final.zfs_2_4.overrideAttrs (prevAttrs: {
+        src = gccKernel.zfs_cachyos.src;
+        patches = [ ];
+        passthru = prevAttrs.passthru // {
+          kernelModuleAttribute = "zfs_cachyos";
+        };
+        postPatch = builtins.replaceStrings [ "grep --quiet '^Linux-M" ] [ "# " ] prevAttrs.postPatch;
+      });
 }
