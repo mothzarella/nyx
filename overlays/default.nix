@@ -287,8 +287,6 @@ in
 
   nix-top_abandoned = final.callPackage ../pkgs/nix-top { };
 
-  nordvpn = final.callPackage ../pkgs/nordvpn { };
-
   nss_git = callOverride ../pkgs/nss-git { };
 
   openmohaa = final.callPackage ../pkgs/openmohaa {
