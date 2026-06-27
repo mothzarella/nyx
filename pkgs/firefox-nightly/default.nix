@@ -16,39 +16,70 @@
 }:
 
 let
+  firefoxRepo = "mozilla-firefox/firefox";
+  firefoxSourceRepo = "https://github.com/${firefoxRepo}";
+
   rust-cbindgen_latest =
-    if rust-cbindgen.version == "0.29.2" then
-      rust-cbindgen.overrideAttrs (prevAttrs: rec {
-        version = "0.29.4";
+    if lib.versionOlder rust-cbindgen.version "0.29.4" then
+      rust-cbindgen.overrideAttrs (
+        finalAttrs: prevAttrs: {
+          version = "0.29.4";
 
-        src = fetchFromGitHub {
-          owner = "mozilla";
-          repo = "cbindgen";
-          tag = "v${version}";
-          hash = "sha256-leeHOwpzXuzg2cTjXehBnCsS+dvU4eIIFtWKeCee20U=";
-        };
+          src = fetchFromGitHub {
+            owner = "mozilla";
+            repo = "cbindgen";
+            tag = "${finalAttrs.version}";
+            hash = "sha256-leeHOwpzXuzg2cTjXehBnCsS+dvU4eIIFtWKeCee20U=";
+          };
 
-        cargoDeps = rustPlatform.fetchCargoVendor {
-          inherit src;
-          inherit (prevAttrs.cargoDeps) name;
-          hash = "sha256-f6YoDoiVoh0BVPYHFO1FsdI4OCsF+LY72QaD57StdIQ=";
-        };
-      })
+          cargoDeps = rustPlatform.fetchCargoVendor {
+            inherit (finalAttrs) src;
+            inherit (prevAttrs.cargoDeps) name;
+            hash = "sha256-f6YoDoiVoh0BVPYHFO1FsdI4OCsF+LY72QaD57StdIQ=";
+          };
+        }
+      )
     else
       rust-cbindgen;
 
   binaryName = "firefox-nightly";
 
+  updateScript = callPackage ./update.nix { };
+
+  removedPatches = [
+    "133-env-var-for-system-dir.patch"
+    "136-no-buildconfig.patch"
+    "139-wayland-drag-animation.patch"
+    "140-bindgen-string-view.patch"
+  ];
+
+  addedPatches = [
+    ./env_var_for_system_dir-ff-unstable.patch
+    ./no-buildconfig-ffx-unstable.patch
+    ./relax-apple-sdk.patch
+  ];
+
+  isRustCbindgen =
+    pkg:
+    (pkg.outPath or null) == (rust-cbindgen.outPath or null)
+    || lib.elem (pkg.pname or "") [
+      "rust-cbindgen"
+      "cbindgen"
+    ];
+
+  replaceRustCbindgen = pkg: if isRustCbindgen pkg then rust-cbindgen_latest else pkg;
+
   mach = buildMozillaMach {
     pname = "firefox-nightly";
-    inherit binaryName;
-    version = with current; "${version}-${buildId}-${builtins.substring 0 7 rev}";
+    inherit binaryName updateScript;
+    version = "${current.version}-${current.buildId}-${builtins.substring 0 7 current.rev}";
     applicationName = "Firefox Nightly";
     requireSigning = false;
     branding = "browser/branding/nightly";
+
     src = fetchurl {
       inherit (current) hash;
-      url = "https://codeload.github.com/mozilla-firefox/firefox/tar.gz/${current.rev}";
+      url = "https://codeload.github.com/${firefoxRepo}/tar.gz/${current.rev}";
       name = "firefox.tar.gz";
     };
 
@@ -63,41 +94,24 @@ let
       mainProgram = binaryName;
       hydraPlatforms = [ "x86_64-linux" ];
     };
-
-    updateScript = callPackage ./update.nix { };
   };
 
   postOverride = prevAttrs: {
-    patches =
-      nyxUtils.removeByBaseNames [
-        "133-env-var-for-system-dir.patch"
-        "136-no-buildconfig.patch"
-        "139-wayland-drag-animation.patch"
-        "140-bindgen-string-view.patch"
-      ] (prevAttrs.patches or [ ])
-      ++ [
-        ./env_var_for_system_dir-ff-unstable.patch
-        ./no-buildconfig-ffx-unstable.patch
-        ./relax-apple-sdk.patch
-      ];
+    patches = nyxUtils.removeByBaseNames removedPatches (prevAttrs.patches or [ ]) ++ addedPatches;
 
     env = (prevAttrs.env or { }) // {
-      MOZ_SOURCE_REPO = "https://github.com/mozilla-firefox/firefox";
+      MOZ_SOURCE_REPO = firefoxSourceRepo;
       MOZ_SOURCE_CHANGESET = current.rev;
       MOZ_INCLUDE_SOURCE_INFO = "1";
     };
 
-    nativeBuildInputs = map (
-      pkg: if pkg.pname or "" == "rust-cbindgen" then rust-cbindgen_latest else pkg
-    ) (prevAttrs.nativeBuildInputs or [ ]);
+    nativeBuildInputs = map replaceRustCbindgen (prevAttrs.nativeBuildInputs or [ ]);
 
     buildInputs =
-      (prevAttrs.buildInputs or [ ])
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        apple-sdk_26
-      ];
+      (prevAttrs.buildInputs or [ ]) ++ lib.optional stdenv.hostPlatform.isDarwin apple-sdk_26;
 
     passthru = (prevAttrs.passthru or { }) // {
+      inherit updateScript;
       rust-cbindgen = rust-cbindgen_latest;
     };
   };
