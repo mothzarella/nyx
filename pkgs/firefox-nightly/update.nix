@@ -28,7 +28,8 @@ writeShellScript "firefox-nightly-update" ''
 
   version_json="''${VERSION_JSON:-pkgs/firefox-nightly/version.json}"
   mozilla_versions_url="https://product-details.mozilla.org/1.0/firefox_versions.json"
-  github_repo="https://github.com/mozilla-firefox/firefox"
+  github_repo_slug="mozilla-firefox/firefox"
+  github_repo_url="https://github.com/$github_repo_slug"
   hg_repo="https://hg-edge.mozilla.org/mozilla-central"
 
   fetch_json() {
@@ -56,12 +57,12 @@ writeShellScript "firefox-nightly-update" ''
   nightly_metadata_json=$(fetch_json "$nightly_metadata_url")
 
   latest_hg_rev=$(
-    printf "%s\n" "$nightly_metadata_json" |
+    printf '%s\n' "$nightly_metadata_json" |
       json_field '.moz_source_stamp'
   )
 
   latest_build_id=$(
-    printf "%s\n" "$nightly_metadata_json" |
+    printf '%s\n' "$nightly_metadata_json" |
       json_field '.buildid'
   )
 
@@ -73,7 +74,7 @@ writeShellScript "firefox-nightly-update" ''
   git init --quiet "$map_dir"
 
   git -C "$map_dir" \
-    -c cinnabar.graft="$github_repo" \
+    -c cinnabar.graft="$github_repo_url" \
     cinnabar fetch \
     "hg::$hg_repo" \
     "$latest_hg_rev"
@@ -82,12 +83,14 @@ writeShellScript "firefox-nightly-update" ''
     git -C "$map_dir" cinnabar hg2git "$latest_hg_rev"
   )
 
-  if [ "$local_rev" = "$latest_rev" ]; then
-    echo "firefox-nightly is already up to date: $local_version-$(git_short "$local_rev")"
+  if [ "$local_version" = "$latest_version" ] \
+    && [ "$local_rev" = "$latest_rev" ] \
+    && [ "$local_build_id" = "$latest_build_id" ]; then
+    echo "firefox-nightly is already up to date: $local_version-$local_build_id-$(git_short "$local_rev")"
     exit 0
   fi
 
-  latest_url="https://codeload.github.com/mozilla-firefox/firefox/tar.gz/$latest_rev"
+  latest_url="https://codeload.github.com/$github_repo_slug/tar.gz/$latest_rev"
 
   latest_hash=$(
     nix --extra-experimental-features nix-command \
@@ -115,5 +118,5 @@ writeShellScript "firefox-nightly-update" ''
 
   git add "$version_json"
 
-  git commit -m "firefox-nightly: $local_version-$local_build_id-$(git_short "$local_rev") -> $latest_version-$latest_build_id-$(git_short "$latest_rev")"
+  git commit -m "firefox_nightly: $local_version-$local_build_id-$(git_short "$local_rev") -> $latest_version-$latest_build_id-$(git_short "$latest_rev")"
 ''
