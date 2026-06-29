@@ -46,10 +46,6 @@ permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  group: garuda-build-all-x86_64-linux
-  cancel-in-progress: false
-
 jobs:
   garuda-build-all-x86_64-linux:
     name: Build-all x86-64 Linux (Garuda-hosted)
