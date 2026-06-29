@@ -88,6 +88,7 @@ let
   cachyosPackages = callOverride ../pkgs/linux-cachyos { };
   isCachyosSupported = cachyosPackages.cachyos-lto.recurseForDerivations or true;
   cachyosDrvDropUpdateScript = drv: if isCachyosSupported then drvDropUpdateScript drv else drv;
+  isCachyosRCLatest = final.lib.versionOlder cachyosPackages.cachyos-gcc.kernel.version cachyosPackages.cachyos-rc.kernel.version;
 
   # Microarch stuff
   makeMicroarchPkgs = import ../shared/make-microarch.nix {
@@ -224,10 +225,10 @@ in
 
   libportal_git = callOverride ../pkgs/libportal-git { };
 
-  linux_cachyos = cachyosDrvDropUpdateScript cachyosPackages.cachyos-lto.kernel;
-  linux_cachyos-lto = cachyosDrvDropUpdateScript cachyosPackages.cachyos-lto.kernel;
+  linux_cachyos = cachyosPackages.cachyos-lto.kernel;
+  linux_cachyos-lto = cachyosPackages.cachyos-lto.kernel;
   linux_cachyos-lto-znver4 = cachyosPackages.cachyos-lto-znver4.kernel;
-  linux_cachyos-gcc = cachyosDrvDropUpdateScript cachyosPackages.cachyos-gcc.kernel;
+  linux_cachyos-gcc = cachyosPackages.cachyos-gcc.kernel;
   linux_cachyos-server = cachyosPackages.cachyos-server.kernel;
   linux_cachyos-hardened = cachyosPackages.cachyos-hardened.kernel;
   linux_cachyos-rc = cachyosPackages.cachyos-rc.kernel;
@@ -239,7 +240,8 @@ in
   linuxPackages_cachyos-gcc = cachyosPackages.cachyos-gcc;
   linuxPackages_cachyos-server = cachyosPackages.cachyos-server;
   linuxPackages_cachyos-hardened = cachyosPackages.cachyos-hardened;
-  linuxPackages_cachyos-rc = cachyosPackages.cachyos-rc;
+  linuxPackages_cachyos-rc =
+    if isCachyosRCLatest then cachyosPackages.cachyos-rc else cachyosPackages.cachyos-lto;
   linuxPackages_cachyos-lts = cachyosPackages.cachyos-lts;
 
   luxtorpeda = final.callPackage ../pkgs/luxtorpeda {
