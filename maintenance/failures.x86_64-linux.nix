@@ -61,9 +61,6 @@
   "linuxPackages_cachyos-gcc.tt-kmd" = "/nix/store/ikzq0p1winjiaih7wyqy3fh437cgwxd9-tt-kmd-2.7.0";
   "linuxPackages_cachyos-gcc.vmm_clock" = "/nix/store/rcp98z1xifrgxf5270cv7493x7grfimv-vmm_clock-0.2.1";
   "linuxPackages_cachyos-gcc.yt6801" = "/nix/store/1bxqn16jqviq883cn3i78zdlmzhr8cwg-yt6801-1.0.30-20250430";
-  "linuxPackages_cachyos-lto.bpftrace" = "/nix/store/7rdpiid0rcm3m5gxb9pja0mzmkhzrkj6-bpftrace-x86_64-unknown-linux-gnu-0.26.1";
-  "linuxPackages_cachyos-lto.oci-seccomp-bpf-hook" = "/nix/store/s6r5jbnfx7p359k3ywdsfxl39jgrmhz0-oci-seccomp-bpf-hook-x86_64-unknown-linux-gnu-1.3.0";
-  "linuxPackages_cachyos-lto.pktgen" = "/nix/store/b7wf8alr0pw4f7r2qv1il6pav186icl6-pktgen-x86_64-unknown-linux-gnu-24.10.3";
   "mwc_git" = "/nix/store/vd49vhc9jjrwscga3m8vr3g1pc143v5l-mwc-wlr-unstable-20250316235640-33b4968";
   "sdl_git" = "/nix/store/1rjg6623idc89qb7vi5dm5zywpywsn58-sdl3-unstable-20260626183202-4bebbec-lib";
   "torzu_git" = "/nix/store/x642h0j1dbr5w2fia2bbg4q61slwz1r9-torzu-unstable-20250422-fd90833";
