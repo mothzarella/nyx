@@ -18,5 +18,6 @@ shfmt -l .
 find . -type f -name '*.sh' -print0 | xargs -0 -r shellcheck -a
 actionlint
 
-# for debugging with bash -x
-exit 0
+tidy --show-body-only yes --mute MISSING_DOCTYPE -q -e README.md
+
+echo "Finished successfully"

@@ -23,7 +23,7 @@
       <li><a href="#running-packages-without-installing">Running packages (without installing)</a></li>
       <li><a href="#binary-cache-notes">Binary Cache notes</a></li>
       <li><a href="#flakehub-notes">FlakeHub notes</a></li>
-      <li><a href="#using-sched-ext-schedulers">Using linux-cachyos with sched-ext</a></li>
+      <li><a href="#cachyos-notes">CachyOS notes</a></li>
       <li><a href="#using-with-read-only-pkgs">Using with read-only pkgs</a></li>
       <li><a href="#using-with-jovian">Using with Jovian</a></li>
     </ul>
@@ -176,7 +176,7 @@ But you'll have access to all packages, the cache, and the registry.</p>
 }
 </code></pre>
 
-<h3 id="running-packages-without-installing">Running packages (without installing)</h2>
+<h3 id="running-packages-without-installing">Running packages (without installing)</h3>
 
 <p>Besides using our module/overlay, you can run packages (without installing them) using:</p>
 
@@ -216,9 +216,62 @@ We do this automatically, so we can gracefully update the cache's address and ke
 
 <p>Then follow one of the guides above.</p>
 
-<h3 id="using-sched-ext-schedulers">Using sched-ext schedulers</h3>
+<h3 id="cachyos-notes">CachyOS notes</h3>
 
-<p> From version 6.12 onwards, sched-ext support is officially available on the upstream kernel. You can use the latest kernel (<code>pkgs.linuxPackages_latest</code>) or our provided CachyOS kernel (<code>pkgs.linuxPackages_cachyos</code>). </p>
+<p>A major selling point of using Chaotic-Nyx's downstream CachyOS kernels is that they achieve **kconfig parity** with the upstream CachyOS. Other flakes and Nixpkgs typically do not attempt to maintain this strict 1:1 configuration parity for their custom or downstream kernels.</p>
+
+<pre lang="nix"><code class="language-nix">
+# configuration.nix
+{ config, pkgs, ... }:
+{
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  # other (optional) custom CachyOS packages that may be fit for your setup include:
+  boot.zfs.package = pkgs.zfs_cachyos;
+  hardware.nvidia.package = pkgs.nvidia_cachyos;
+}
+</code></pre>
+
+<p>The default variant matches the upstream (at the time of writing, LTO+BORE), check the equivalent PKGBUILD variables in <code>pkgs/linux-cachyos/config-vars/cachyos-lto.json</code>. Here's an example using LTS</p>
+
+<p>We offer other variants: <code>hardened</code>, <code>lts</code>, <code>rc</code>, <code>server</code>, and <code>lto-znver4</code> (for AMD's Zen4 or superior). They all update individually. Plus a <code>gcc</code> that follows the default, in case Clang+LTO is causing you any trouble.</p>
+
+<pre lang="nix"><code class="language-nix">
+# configuration.nix
+{ config, pkgs, ... }:
+{
+  boot.kernelPackages = pkgs.linuxPackages_cachyos-lts;
+  # other (optional) custom CachyOS packages that may be fit for your setup include:
+  hardware.nvidia.package = pkgs.nvidia_cachyos-lts;
+  boot.zfs.package = pkgs.zfs_cachyos; # Userspace package here, doesn't follow kernel variants.
+}
+</code></pre>
+
+<p>You may install the CachyOS kernel directly using the default modules and overlays with <code>pkgs.linuxPackages_cachyos</code>. Alternatively, use <code>chaotic.legacyPackages.x86_64-linux.linuxPackages_cachyos</code> if you would like to use the package directly without using modules and overlay</p>
+
+<p>Not all the variants have kernel modules pre-compiled. We would love to, but don't have enough resources.</p>
+
+<p>CachyOS upstream doesn't support aarch64, due to the parity goal, we ignore it too.</p>
+
+<p>One can validate the kconfig parity with <code>pkgs/linux-cachyos/conformance-test.sh</code>, you'll need to tweak the envvars. Please, open an issue if drifted.</p>
+
+<h4>CachyOS x86-64 microarchitecture optimisations</h4>
+
+<pre lang="nix"><code class="language-nix">
+{ pkgs, ... }:
+{
+  boot.kernelPackages =
+    pkgs.linuxPackages_cachyos.cachyOverride
+      { cachyVars = pkgs.linuxPackages_cachyos.kernel.cachyConfig.cachyVars // { "_processor_opt" = "GENERIC_V3"; }; }
+}
+</code></pre>
+
+<p>Use either <code>GENERIC_V2</code>, <code>GENERIC_V3</code>, <code>GENERIC_V4</code>, or <code>ZEN4</code>. We don't provide cache for these.</p>
+
+<p>We support a few other variables from CachyOS' PKGBUILD in the <code>cachyVars</code> atttrset.</p>
+
+<h4 id="using-sched-ext-schedulers">Using sched-ext schedulers</h4>
+
+<p> From version 6.12 onwards, sched-ext support is officially available on the upstream kernel. You can use the latest kernel (<code>pkgs.linuxPackages_latest</code>) or our provided CachyOS kernel (<code>pkgs.linuxPackages_cachyos</code>). Not all variants of CachyOS support it.</p>
 
 <p>Just add this to your configuration:</p>
 
@@ -381,29 +434,6 @@ enable_seq  hotplug_seq  nr_rejected  root  state  switch_all
 <p>If you need to change this behavior, set <code>chaotic.nyx.onTopOf = "user-pkgs";</code>. Be warned that you mostly won't be able to benefit from our binary cache after this change.</p>
 
 <p>You can also disable our overlay entirely by configuring <code>chaotic.nyx.overlay.enable = false;</code>.</p>
-
-<h3>CachyOS kernels</h3>
-
-<p>Even though we provide <code>linuxPackages_cachyos{,-hardened,-lto,-rc,-server}</code>, we don't maintain the kernel modules in them. With the exception of <code>*.zfs_cachyos</code>. Before reporting errors first check if their upstream works. e.g.: <code>nix build nixpkgs#linuxPackages_6_16.systemtap</code> (for GCC kernels) and  <code>nix build nixpkgs#pkgsLLVM.linuxPackages_6_16.systemtap</code> (for LTO kernels).</p>
-
-<p>We cache all modules from <code>linuxPackages_cachyos{,-hardened,-lto,-server}</code>, but not from <code>linuxPackages_cachyos-rc</code>.</p>
-
-<p>You may install the CachyOS kernel directly using the default modules and overlays with <code>pkgs.linuxPackages_cachyos</code>. Alternatively, use <code>chaotic.legacyPackages.x86_64-linux.linuxPackages_cachyos</code> if you would like to use the package directly without using modules and overlay</p>
-
-<h3>CachyOS x86-64 microarchitecture optimisations</h3>
-
-<pre lang="nix"><code class="language-nix">
-{ pkgs, ... }:
-{
-  boot.kernelPackages =
-    pkgs.linuxPackages_cachyos.cachyOverride
-      { cachyVars = pkgs.linuxPackages_cachyos.kernel.cachyConfig.cachyVars // { "_processor_opt" = "GENERIC_V3"; }; }
-}
-</code></pre>
-
-<p>Use either <code>GENERIC_V2</code>, <code>GENERIC_V3</code>, <code>GENERIC_V4</code>, or <code>ZEN4</code>. We don't provide cache for these.</p>
-
-<p>We support a few other variables from CachyOS' PKGBUILD in the <code>cachyVars</code> atttrset.</p>
 
 <h2 id="criteria-for-new-packages">Criteria for new packages</h2>
 

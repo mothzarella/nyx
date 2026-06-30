@@ -3,6 +3,7 @@
   deadnix,
   findutils,
   formatter,
+  html-tidy,
   ripgrep,
   statix,
   prettier,
@@ -27,6 +28,7 @@ let
 
   path = lib.makeBinPath [
     findutils
+    html-tidy
     ripgrep
     formatter.passthru.nixFormatter
     statix
