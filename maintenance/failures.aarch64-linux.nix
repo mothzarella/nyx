@@ -1,11 +1,5 @@
 {
-  "bees_git" = "/nix/store/30sgamxhprrlpl0y65yzx4lhxpca6qcx-bees-unstable-20260503221818-2d53565";
-  "firefox-unwrapped_nightly" = "skip";
-  "firefox_nightly" = "skip";
-  "qtile-extras_git" = "/nix/store/d4l3azd20dnv4gvmnczrrqkagn0d79rv-python3.13-qtile-extras-0.36.99.99";
-  "qtile-module_git" = "/nix/store/cngcj22i9m8wm5wsml70yj2l43frhwc1-python3.13-qtile-0.36.0.99.99";
-  "river_git" = "/nix/store/ahhvbnbxrx14zwk5zrjhwm4i150d3bp1-river-classic-unstable-20260521070523-b1af960";
+  "sdl_git" = "/nix/store/n5ksndvxzkqidym25jrn5d9mk32qa798-sdl3-unstable-20260626183202-4bebbec-lib";
   "telegram-desktop-unwrapped_git" = "skip";
-  "telegram-desktop_git" = "/nix/store/149a7qhbkjdnqpzsn329k66h0sy231xs-telegram-desktop-unstable-20260615175454-9cca005";
-  "tg-owt_git" = "/nix/store/9jhzvj3gq8nkilv95dmyxcfn9kkyhhk3-tg_owt-unstable-20260409072434-89df288";
+  "telegram-desktop_git" = "/nix/store/y41l41d94b1dvf584k6vxi2r1jax8z8x-telegram-desktop-unstable-20260626131125-1c1a538";
 }
