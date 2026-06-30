@@ -81,11 +81,13 @@ let
     nyxRecursionHelper.derivations commentWarn derivationMap allPackages
   );
 
+  uniqPackagesEval = nyxUtils.uniqueByString (pkg: pkg.cmd.this or "#${pkg.cmd.key}") packagesEval;
+
   depFirstSorter =
     pkgA: pkgB:
     if pkgA.drv == null || pkgB.drv == null then false else nyxUtils.drvElem pkgA.drv pkgB.deps;
 
-  packagesEvalSorted = lib.lists.toposort depFirstSorter packagesEval;
+  packagesEvalSorted = lib.lists.toposort depFirstSorter uniqPackagesEval;
 
   packagesCmds = builtins.map (pkg: pkg.cmd) packagesEvalSorted.result;
 
@@ -93,7 +95,7 @@ let
 
   buildStatus = lib.lists.partition (cmd: cmd.build == true) packagesCmds;
 
-  uniqBuildable = nyxUtils.uniqueByString (pkg: pkg.this) buildStatus.right;
+  buildable = buildStatus.right;
 
   groupedBuildable = lib.lists.foldl' (
     acc: cmd:
@@ -105,18 +107,18 @@ let
       mergedGroup = lib.lists.flatten partitions.right ++ [ cmd ];
     in
     partitions.wrong ++ [ mergedGroup ]
-  ) [ ] uniqBuildable;
+  ) [ ] buildable;
 
   unbuildableGroup = buildStatus.wrong;
 in
 finalJSON.overrideAttrs (oldAttrs: {
   passthru = (oldAttrs.passthru or { }) // {
     inherit
-      packagesCmds
-      system
       flakeSelf
-      packagesEval
       groupedBuildable
+      packagesCmds
+      packagesEval
+      system
       unbuildableGroup
       ;
   };
