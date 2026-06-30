@@ -71,20 +71,24 @@ let
       linter = callPackage ../tools/linter {
         formatter = self.formatter.${pkgs.stdenv.hostPlatform.system};
       };
+      expected-pins = callPackage ../tools/expected-pins {
+        allSystems = builtins.mapAttrs (_system: { chaotic-nyx, ... }: chaotic-nyx.dry-build) newSet;
+      };
     };
 
   mkDevPackagesSet = nyxPkgs: nixPkgs: {
     chaotic-nyx = mkDevPackages nyxPkgs nixPkgs;
   };
+
+  newSet = {
+    x86_64-linux =
+      base.x86_64-linux // (mkDevPackagesSet packages.x86_64-linux nixpkgs.legacyPackages.x86_64-linux);
+    aarch64-linux =
+      base.aarch64-linux
+      // (mkDevPackagesSet packages.aarch64-linux nixpkgs.legacyPackages.aarch64-linux);
+    aarch64-darwin =
+      base.aarch64-darwin
+      // (mkDevPackagesSet packages.aarch64-darwin nixpkgs.legacyPackages.aarch64-darwin);
+  };
 in
-base
-// {
-  x86_64-linux =
-    base.x86_64-linux // (mkDevPackagesSet packages.x86_64-linux nixpkgs.legacyPackages.x86_64-linux);
-  aarch64-linux =
-    base.aarch64-linux
-    // (mkDevPackagesSet packages.aarch64-linux nixpkgs.legacyPackages.aarch64-linux);
-  aarch64-darwin =
-    base.aarch64-darwin
-    // (mkDevPackagesSet packages.aarch64-darwin nixpkgs.legacyPackages.aarch64-darwin);
-}
+base // newSet
