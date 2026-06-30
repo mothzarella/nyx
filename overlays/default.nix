@@ -136,6 +136,15 @@ let
       }
     else
       { };
+
+  # Propagate hydraPlatforms
+  wrapFirefoxForBuilder =
+    pkg: args:
+    (final.wrapFirefox pkg args).overrideAttrs (prevAttrs: {
+      meta = prevAttrs.meta // {
+        inherit (pkg.meta) hydraPlatforms;
+      };
+    });
 in
 {
   inherit nyxUtils jovian-chaotic rustc_latest;
@@ -197,7 +206,7 @@ in
   };
 
   firefox-unwrapped_nightly = final.callPackage ../pkgs/firefox-nightly { };
-  firefox_nightly = final.wrapFirefox final.firefox-unwrapped_nightly { };
+  firefox_nightly = wrapFirefoxForBuilder final.firefox-unwrapped_nightly { };
 
   gamescope_git = callOverride ../pkgs/gamescope-git { };
   gamescope-wsi_git = callOverride ../pkgs/gamescope-git { isWSI = true; };
