@@ -246,7 +246,7 @@ We do this automatically, so we can gracefully update the cache's address and ke
 
 <p>We offer other variants: <code>hardened</code>, <code>lts</code>, <code>rc</code>, <code>server</code>, and <code>lto-znver4</code> (for AMD's Zen4 or superior). They all update individually. Plus a <code>gcc</code> that follows the default, in case Clang+LTO is causing you any trouble.</p>
 
-<p>You may install the CachyOS kernel directly using the default modules and overlays with <code>pkgs.linuxPackages_cachyos</code>. Alternatively, use <code>chaotic.legacyPackages.x86_64-linux.linuxPackages_cachyos</code> if you would like to use the package directly without using modules and overlay</p>
+<p>You may install the CachyOS kernel directly using the default modules and overlays with <code>pkgs.linuxPackages_cachyos</code>. Alternatively, use <code>chaotic.legacyPackages.x86_64-linux.linuxPackages_cachyos</code> if you would like to use the package directly without using modules and overlay.</p>
 
 <p>Not all the variants have kernel modules pre-compiled. We would love to, but don't have enough resources.</p>
 
@@ -311,15 +311,6 @@ enable_seq  hotplug_seq  nr_rejected  root  state  switch_all
 # configuration.nix
 {
   services.scx.scheduler = "scx_rusty";
-}
-</code></pre>
-
-<p> We also provide a git version of scx to stay up to date on the latest features. </p>
-
-<pre lang="nix"><code class="language-nix">
-# configuration.nix
-{
-  services.scx.package = pkgs.scx_git.full;
 }
 </code></pre>
 
