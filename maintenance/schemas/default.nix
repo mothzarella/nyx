@@ -53,9 +53,11 @@
     doc = ''
       Flake inputs we don't want in our users' flake lock.
     '';
-    inventory = _output: {
-      shortDescription = "Exposes other flake inputs.";
-      what = "attrset";
+    inventory = output: {
+      children = builtins.mapAttrs (name: value: {
+        shortDescription = "Vendored ${name}'s flake";
+        what = value._type;
+      }) output;
     };
   };
 }
