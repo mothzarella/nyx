@@ -231,9 +231,7 @@ We do this automatically, so we can gracefully update the cache's address and ke
 }
 </code></pre>
 
-<p>The default variant matches the upstream (at the time of writing, LTO+BORE), check the equivalent PKGBUILD variables in <code>pkgs/linux-cachyos/config-vars/cachyos-lto.json</code>. Here's an example using LTS</p>
-
-<p>We offer other variants: <code>hardened</code>, <code>lts</code>, <code>rc</code>, <code>server</code>, and <code>lto-znver4</code> (for AMD's Zen4 or superior). They all update individually. Plus a <code>gcc</code> that follows the default, in case Clang+LTO is causing you any trouble.</p>
+<p>The default variant matches the upstream (at the time of writing, LTO+BORE), check the equivalent PKGBUILD variables in <code>pkgs/linux-cachyos/config-vars/cachyos-lto.json</code>. Here's an example using LTS:</p>
 
 <pre lang="nix"><code class="language-nix">
 # configuration.nix
@@ -245,6 +243,8 @@ We do this automatically, so we can gracefully update the cache's address and ke
   boot.zfs.package = pkgs.zfs_cachyos; # Userspace package here, doesn't follow kernel variants.
 }
 </code></pre>
+
+<p>We offer other variants: <code>hardened</code>, <code>lts</code>, <code>rc</code>, <code>server</code>, and <code>lto-znver4</code> (for AMD's Zen4 or superior). They all update individually. Plus a <code>gcc</code> that follows the default, in case Clang+LTO is causing you any trouble.</p>
 
 <p>You may install the CachyOS kernel directly using the default modules and overlays with <code>pkgs.linuxPackages_cachyos</code>. Alternatively, use <code>chaotic.legacyPackages.x86_64-linux.linuxPackages_cachyos</code> if you would like to use the package directly without using modules and overlay</p>
 
