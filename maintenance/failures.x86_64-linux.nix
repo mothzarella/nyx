@@ -1,7 +1,8 @@
 {
+  "bytecode-viewer_git" = "/nix/store/1kx3mvqry4i1v4kwgq81lfjpnqv9qaik-bytecode-viewer-unstable-20260402202244-3a3a314";
   "linuxPackages_cachyos.amdgpu-i2c" = "/nix/store/qqp003ncxchvp0xv80g5pjrgqf1gac6a-amdgpu-i2c-x86_64-unknown-linux-gnu-0-unstable-2024-12-16";
   "linuxPackages_cachyos.amneziawg" = "/nix/store/0xzymgjxrlzdzclw4vzb4wjmywfyhc78-amneziawg-x86_64-unknown-linux-gnu-1.0.20260611";
-  "linuxPackages_cachyos.bcachefs" = "/nix/store/2s9fsnk93raim10mrlyh4v6ai069l7s9-bcachefs-x86_64-unknown-linux-gnu-7.1.3-1.38.6";
+  "linuxPackages_cachyos.bcachefs" = "/nix/store/x42pv4r9p2fj568zgzyxksg3wq1j5p4p-bcachefs-x86_64-unknown-linux-gnu-7.1.3-1.38.8";
   "linuxPackages_cachyos.bcc" = "/nix/store/yvmji6wknddjbfybaq6m121cajs659a2-bcc-0.36.1-x86_64-unknown-linux-gnu";
   "linuxPackages_cachyos.bpftrace" = "/nix/store/7rdpiid0rcm3m5gxb9pja0mzmkhzrkj6-bpftrace-x86_64-unknown-linux-gnu-0.26.1";
   "linuxPackages_cachyos.chipsec" = "/nix/store/jslkcbwx5302gpab90aghkdjrfrr9i4m-chipsec-1.13.20-x86_64-unknown-linux-gnu";
@@ -14,7 +15,7 @@
   "linuxPackages_cachyos.linux-gpib" = "/nix/store/wk5dplqx11n12m741qh8vvpmw7531mg0-linux-gpib-kernel-x86_64-unknown-linux-gnu-4.3.7";
   "linuxPackages_cachyos.lttng-modules" = "/nix/store/vjdxcjb08n44pg8mz7p53fa6r806qnqg-lttng-modules-7.1.3-x86_64-unknown-linux-gnu-2.14.3";
   "linuxPackages_cachyos.mbp2018-bridge-drv" = "/nix/store/gd60g4rrsi4gh0c2p1r3zf6p2lpvr5fv-mbp2018-bridge-drv-x86_64-unknown-linux-gnu-2020-01-31";
-  "linuxPackages_cachyos.mm-tools" = "/nix/store/w5dp0nzy16k0knbry8mjq997dc8yi8yp-mm-tools-x86_64-unknown-linux-gnu-6.18.37";
+  "linuxPackages_cachyos.mm-tools" = "/nix/store/5ylq5r57mmh6fnkicqx209aw8gr2b3cd-mm-tools-x86_64-unknown-linux-gnu-6.18.38";
   "linuxPackages_cachyos.netatop" = "/nix/store/9r7dlw2s4yzbg6gxbbxg7rp1qj2jcmi3-netatop-7.1.3-3.2.2-x86_64-unknown-linux-gnu";
   "linuxPackages_cachyos.nvidia_x11_beta_open" = "/nix/store/0x66q5hs79r2wgjal9cr8cr7sgbm0as1-nvidia-open-x86_64-unknown-linux-gnu-595.45.04-7.1.3";
   "linuxPackages_cachyos.nvidia_x11_production_open" = "/nix/store/pd5zamir0p2lswi9qzagmhd1b69pgjz6-nvidia-open-x86_64-unknown-linux-gnu-595.84-7.1.3";
