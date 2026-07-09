@@ -4,7 +4,7 @@
 
 <img alt="GitHub's menu buttons re-ordered and re-labeled to say: Make Pull requests Not Issues. Sounding like Make Love Not War" src="https://gist.githubusercontent.com/PedroHLC/eba5644666a1f2f007319d566ab77a83/raw/91c6064eb0d5cd1e19ac76a48acda87996f330f9/make-pr-not-issues.svg" width="330" height="49" /><br/>
 
-<p>Nix flake for "too much bleeding-edge" and unreleased packages (e.g., mesa_git, linux_cachyos, firefox_nightly, sway_git, gamescope_git). And experimental modules (e.g., HDR, duckdns).</p>
+<p>Nix flake for "too much bleeding-edge" and unreleased packages (e.g., mesa_git, linux_cachyos, firefox_nightly, sway_git, gamescope_git). And experimental modules (e.g., HDR, duckdns). And yes, WE'RE BACK FROM THE DEAD!</p>
 
 <p>From the <a href="https://github.com/chaotic-cx">Chaotic Linux User Group (LUG)</a>, the same one that maintains <a href="https://aur.chaotic.cx">Chaotic-AUR</a>! 🧑🏻‍💻</p>
 
