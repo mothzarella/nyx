@@ -282,8 +282,8 @@ in
   nvidia_cachyos-lts = callOverride ../pkgs/nvidia-cachyos { variant = "lts"; };
 
   mpv-vapoursynth =
-    (final.mpv-unwrapped.wrapper {
-      mpv = final.mpv-unwrapped.override {
+    (final.mpv.override {
+      mpv-unwrapped = final.mpv-unwrapped.override {
         vapoursynthSupport = true;
         vapoursynth = final.vapoursynth.withPlugins [ final.vapoursynth-mvtools ];
       };
