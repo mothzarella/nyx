@@ -30,6 +30,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Build and extract matrix
         id: set-matrix
@@ -76,6 +78,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       # similar to build.yml
       - name: Create niks3 auth-token
         run: |
