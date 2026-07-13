@@ -1,5 +1,4 @@
 {
-  "sdl_git" = "/nix/store/qid3i7mhqf85vdj6gcbv62yz7yjg6pdh-sdl3-unstable-20260626183202-4bebbec-lib";
   "spirv-headers_git" = "/nix/store/x5hhxyjgxczfwn68fpsj2i1wx3wmxz5r-spirv-headers-unstable-20260708154953-29981f6";
   "telegram-desktop-unwrapped_git" = "skip";
   "telegram-desktop_git" = "/nix/store/w4i2nrz6pxwdmlqb1dk2dk3gq8cl5ljr-telegram-desktop-unstable-20260709183339-e01ee72";

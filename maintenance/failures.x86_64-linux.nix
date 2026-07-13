@@ -61,7 +61,6 @@
   "linuxPackages_cachyos-gcc.vmm_clock" = "/nix/store/i44w0ivd7pxw3kap054n6x4xm8gdgb5k-vmm_clock-0.2.1";
   "linuxPackages_cachyos-gcc.yt6801" = "/nix/store/6ng3d30h0jpg0x5hq5y3ni2wap37bqk4-yt6801-1.0.30-20250430";
   "mwc_git" = "/nix/store/8vhgz331s25vy9q1k4kmkdy8a3pwjz6g-mwc-wlr-unstable-20250316235640-33b4968";
-  "sdl_git" = "/nix/store/bsib2c1bj1gsjqa2avky188vj5nf5ax6-sdl3-unstable-20260626183202-4bebbec-lib";
   "spirv-headers_git" = "/nix/store/xz2qspnkq7xdv8bazi2ps6ysvyrfd2dw-spirv-headers-unstable-20260708154953-29981f6";
   "vulkanPackages_latest.glslang" = "/nix/store/r5l6vsyhf2fkfazjf9a31smjk1nkdl0r-glslang-1.4.352-unstable-bin";
   "vulkanPackages_latest.spirv-headers" = "/nix/store/jg9y8a75a0z3rlg4qd44rzvwpd64f9ka-spirv-headers-1.4.352-unstable";
