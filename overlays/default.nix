@@ -408,11 +408,6 @@ in
   };
   tg-owt_git = callOverride ../pkgs/tg-owt-git { };
 
-  torzu_git = final.kdePackages.callPackage ../pkgs/torzu-git {
-    current = importJSON ../pkgs/torzu-git/version.json;
-    inherit (final) fetchTorGit;
-  };
-
   vulkanPackages_latest = callOverride ../pkgs/vulkan-versioned {
     vulkanVersions = importJSON ../pkgs/vulkan-versioned/latest.json;
   };
