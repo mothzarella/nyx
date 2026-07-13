@@ -1,5 +1,4 @@
 {
-  "bytecode-viewer_git" = "/nix/store/3bhinfgr9di9nbfa1snjnr29s7cp0jf3-bytecode-viewer-unstable-20260402202244-3a3a314";
   "linuxPackages_cachyos.amdgpu-i2c" = "/nix/store/7ygsfxv5shk5sdqp8ky0fyzd08rgnh60-amdgpu-i2c-x86_64-unknown-linux-gnu-0-unstable-2024-12-16";
   "linuxPackages_cachyos.amneziawg" = "/nix/store/nxsdyj98pp0b5y45dr48l2chz22ha4gp-amneziawg-x86_64-unknown-linux-gnu-1.0.20260611";
   "linuxPackages_cachyos.bcachefs" = "/nix/store/0iz7f4lx7qzr9cpjx5w302vdxkpjksna-bcachefs-x86_64-unknown-linux-gnu-7.1.3-1.38.8";

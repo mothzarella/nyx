@@ -1,6 +1,5 @@
 {
   "appmenu-gtk3-module" = "/nix/store/zc2kk54s6xms1j7i8834wnaay1pscn53-appmenu-gtk3-module-0.7.6";
-  "bytecode-viewer_git" = "/nix/store/2408nvc7v0r7kk1h9pzf3v9h4yz3zsmy-bytecode-viewer-unstable-20260402202244-3a3a314";
   "discord-krisp" = "/nix/store/xg6pmxss890xcwaqg2g7qarn3d1mnz7x-discord-0.0.398";
   "firedragon-bin" = "/nix/store/hfg0zrnwhv7kvwp5d96zj0mismw6cwja-firedragon-bin-12.9.1";
   "firedragon-catppuccin-bin" = "/nix/store/ac3xh9smghbvxcczaz6dkpi338bdk29y-firedragon-catppuccin-bin-12.9.1";

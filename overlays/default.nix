@@ -173,8 +173,6 @@ in
     overrideDescription (old: old + " (without applets' symlinks)")
   );
 
-  bytecode-viewer_git = final.callPackage ../pkgs/bytecode-viewer-git { };
-
   cutty_git = callOverride ../pkgs/cutty-git { };
 
   discord-krisp = callOverride ../pkgs/discord-krisp { };
