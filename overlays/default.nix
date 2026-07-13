@@ -286,8 +286,6 @@ in
     }).overrideAttrs
       (overrideDescription (old: old + " (includes vapoursynth-mvtools)"));
 
-  mwc_git = callOverride ../pkgs/mwc-git { };
-
   niri_git = callOverride ../pkgs/niri-git { };
 
   nix_git = callOverride ../pkgs/nix-git { };

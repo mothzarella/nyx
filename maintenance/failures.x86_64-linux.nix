@@ -60,5 +60,4 @@
   "linuxPackages_cachyos-gcc.tt-kmd" = "/nix/store/49lnglv7rl5n8v41dfvzzjjwrm6xph5i-tt-kmd-2.7.0";
   "linuxPackages_cachyos-gcc.vmm_clock" = "/nix/store/i44w0ivd7pxw3kap054n6x4xm8gdgb5k-vmm_clock-0.2.1";
   "linuxPackages_cachyos-gcc.yt6801" = "/nix/store/6ng3d30h0jpg0x5hq5y3ni2wap37bqk4-yt6801-1.0.30-20250430";
-  "mwc_git" = "/nix/store/8vhgz331s25vy9q1k4kmkdy8a3pwjz6g-mwc-wlr-unstable-20250316235640-33b4968";
 }
