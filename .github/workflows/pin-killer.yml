@@ -16,7 +16,7 @@ jobs:
         with:
           extra_nix_config: |
             accept-flake-config = true
-            system-features = big-parallel gccarch-x86-64-v3
+            system-features = big-parallel gccarch-x86-64-v3 kvm
       # similar to build.yml
       - name: Create niks3 auth-token
         run: |
