@@ -7,7 +7,7 @@ on:
 jobs:
   pin-kill:
     name: Unpin orphans
-    runs-on: ubuntu-latest
+    runs-on: nyxbuilder
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -16,7 +16,9 @@ jobs:
         with:
           extra_nix_config: |
             accept-flake-config = true
+            sandbox-fallback = false
             system-features = big-parallel gccarch-x86-64-v3 kvm
+          install_options: --daemon
       # similar to build.yml
       - name: Create niks3 auth-token
         run: |
